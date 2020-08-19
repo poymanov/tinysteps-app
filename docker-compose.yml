@@ -1,0 +1,42 @@
+version: '3'
+services:
+    gateway:
+        build:
+            context: ./docker/gateway/nginx
+        ports:
+            - "8081:8081"
+            - "8082:8082"
+        depends_on:
+            - api
+            - mailer
+    api:
+        build:
+            context: ./docker/api/nginx
+        volumes:
+            - ./api:/app
+        depends_on:
+            - api-php-fpm
+    api-php-fpm:
+        build:
+            context: ./docker/api/php
+            dockerfile: php-fpm.docker
+        volumes:
+            - ./api:/app
+    api-php-cli:
+        build:
+            context: ./docker/api/php
+            dockerfile: php-cli.docker
+        volumes:
+            - ./api:/app
+    api-db:
+        image: postgres:11.2-alpine
+        volumes:
+            - api-db:/var/lib/postgresql/data
+        env_file:
+            - ./docker/api/db/.env
+        ports:
+            - "5432:5432"
+    mailer:
+        image: mailhog/mailhog
+volumes:
+    api-db:
