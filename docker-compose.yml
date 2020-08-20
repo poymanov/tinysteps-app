@@ -6,8 +6,10 @@ services:
         ports:
             - "8081:8081"
             - "8082:8082"
+            - "8083:8083"
         depends_on:
             - api
+            - api-docs
             - mailer
     api:
         build:
@@ -36,6 +38,11 @@ services:
             - ./docker/api/db/.env
         ports:
             - "5432:5432"
+    api-docs:
+        build:
+            context: ./docker/api-docs/nginx
+        volumes:
+            - ./api-docs:/app
     mailer:
         image: mailhog/mailhog
 volumes:

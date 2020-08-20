@@ -90,6 +90,18 @@
     "laminas/laminas-zendframework-bridge": {
         "version": "1.1.0"
     },
+    "nelmio/cors-bundle": {
+        "version": "1.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "1.5",
+            "ref": "6388de23860284db9acce0a7a5d9d13153bcb571"
+        },
+        "files": [
+            "config/packages/nelmio_cors.yaml"
+        ]
+    },
     "ocramius/proxy-manager": {
         "version": "2.8.0"
     },
@@ -247,6 +259,9 @@
     "symfony/polyfill-php80": {
         "version": "v1.18.1"
     },
+    "symfony/process": {
+        "version": "v5.1.3"
+    },
     "symfony/routing": {
         "version": "5.1",
         "recipe": {
@@ -284,5 +299,8 @@
     },
     "webimpress/safe-writer": {
         "version": "2.0.1"
+    },
+    "zircote/swagger-php": {
+        "version": "3.0.4"
     }
 }
