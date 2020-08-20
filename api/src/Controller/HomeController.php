@@ -17,7 +17,14 @@ use Symfony\Component\Routing\Annotation\Route;
  * ),
  * @OA\Server(
  *     url="/"
- * )
+ * ),
+ * @OA\Schema(
+ *     schema="ErrorModel",
+ *     type="object",
+ *     @OA\Property(property="error", type="object", nullable=true,
+ *         @OA\Property(property="message", type="string"),
+ *     ),
+ * ),
  */
 class HomeController extends AbstractController
 {
