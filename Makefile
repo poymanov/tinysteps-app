@@ -24,9 +24,9 @@ docker-build:
 	docker-compose build
 
 api-clear:
-	docker run --rm -v ${PWD}/api:/app -w /app alpine sh -c 'rm -rf var/cache/* var/log/*'
+	docker run --rm -v ${PWD}/api:/app -w /app alpine sh -c 'rm -rf var/cache/* var/log/* public/docs/*'
 
-api-init: api-permissions api-composer-install api-wait-db
+api-init: api-permissions api-composer-install api-wait-db api-generate-documentation
 
 api-permissions:
 	docker run --rm -v ${PWD}/api:/app -w /app alpine chmod 777 var/cache var/log
@@ -39,3 +39,6 @@ api-wait-db:
 
 api-test:
 	docker-compose run --rm api-php-cli php bin/phpunit
+
+api-generate-documentation:
+	docker-compose run --rm api-php-cli php bin/console api:generate-docs
