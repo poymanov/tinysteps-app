@@ -6,12 +6,26 @@ namespace App\Tests\Fixtures;
 
 use App\Model\User\Entity\User\Email;
 use App\Model\User\Entity\User\Name;
+use App\Model\User\Entity\User\ResetToken;
+use App\Model\User\Service\ResetTokenizer;
 use App\Tests\Builder\User\UserBuilder;
+use DateInterval;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
 class UserFixture extends Fixture
 {
+    private ResetTokenizer $tokenizer;
+
+    /**
+     * @param ResetTokenizer $tokenizer
+     */
+    public function __construct(ResetTokenizer $tokenizer)
+    {
+        $this->tokenizer = $tokenizer;
+    }
+
     public function load(ObjectManager $manager)
     {
         $existing = $this->getConfirmedUser()
@@ -26,6 +40,29 @@ class UserFixture extends Fixture
             ->build();
 
         $manager->persist($notConfirmed);
+
+        $alreadyRequested = $this->getConfirmedUser()
+            ->viaEmail(new Email('already-requested@app.test'))
+            ->withResetToken($this->tokenizer->generate())
+            ->build();
+
+        $manager->persist($alreadyRequested);
+
+        $expiredToken = new ResetToken('456', new DateTimeImmutable());
+        $withExpiredToken = $this->getConfirmedUser()
+            ->viaEmail(new Email('expired-token@email.test'))
+            ->withResetToken($expiredToken)
+            ->build();
+
+        $manager->persist($withExpiredToken);
+
+        $resetToken   = new ResetToken('123', (new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $requestedResetPassword = $this->getConfirmedUser()
+            ->viaEmail(new Email('request-reset-token@email.test'))
+            ->withResetToken($resetToken)
+            ->build();
+
+        $manager->persist($requestedResetPassword);
 
         $manager->flush();
     }

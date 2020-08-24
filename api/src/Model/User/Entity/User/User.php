@@ -22,49 +22,55 @@ class User
      * @ORM\Column(type="user_user_id")
      * @ORM\Id
      */
-    private $id;
+    private Id $id;
 
     /**
      * @var Email
      * @ORM\Column(type="user_user_email", nullable=false)
      */
-    private $email;
+    private Email $email;
 
     /**
      * @var Name
      * @ORM\Embedded(class="Name")
      */
-    private $name;
+    private Name $name;
 
     /**
      * @var Status
      * @ORM\Column(type="user_user_status")
      */
-    private $status;
+    private Status $status;
 
     /**
      * @var Role
      * @ORM\Column(type="user_user_role", length=16)
      */
-    private $role;
+    private Role $role;
 
     /**
      * @var string|null
      * @ORM\Column(type="string", name="password_hash")
      */
-    private $passwordHash;
+    private ?string $passwordHash;
 
     /**
      * @var string|null
      * @ORM\Column(type="string", name="confirm_token", nullable=true)
      */
-    private $confirmToken;
+    private ?string $confirmToken;
+
+    /**
+     * @var ResetToken|null
+     * @ORM\Embedded(class="ResetToken", columnPrefix="reset_token_")
+     */
+    private ?ResetToken $resetToken = null;
 
     /**
      * @var DateTimeImmutable
      * @ORM\Column(type="datetime_immutable")
      */
-    private $createdAt;
+    private DateTimeImmutable $createdAt;
 
     /**
      * @param Id                $id
@@ -77,42 +83,6 @@ class User
         $this->createdAt = $date;
         $this->name      = $name;
         $this->role      = Role::user();
-    }
-
-    /**
-     * Регистрация через email
-     *
-     * @param Id                $id
-     * @param DateTimeImmutable $date
-     * @param Name              $name
-     * @param Email             $email
-     * @param string            $hash
-     * @param string            $token
-     *
-     * @return $this
-     */
-    public static function signUpByEmail(Id $id, DateTimeImmutable $date, Name $name, Email $email, string $hash, string $token): self
-    {
-        $user               = new self($id, $date, $name);
-        $user->email        = $email;
-        $user->passwordHash = $hash;
-        $user->confirmToken = $token;
-        $user->status       = Status::wait();
-
-        return $user;
-    }
-
-    /**
-     * Подтверждение учетной записи пользователя
-     */
-    public function confirmSignUp(): void
-    {
-        if (!$this->getStatus()->isWait()) {
-            throw new DomainException('Токен уже подтвержден.');
-        }
-
-        $this->status       = Status::active();
-        $this->confirmToken = null;
     }
 
     /**
@@ -172,10 +142,99 @@ class User
     }
 
     /**
+     * @return ResetToken|null
+     */
+    public function getResetToken(): ?ResetToken
+    {
+        return $this->resetToken;
+    }
+
+    /**
      * @return DateTimeImmutable
      */
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    /**
+     * Регистрация через email
+     *
+     * @param Id                $id
+     * @param DateTimeImmutable $date
+     * @param Name              $name
+     * @param Email             $email
+     * @param string            $hash
+     * @param string            $token
+     *
+     * @return $this
+     */
+    public static function signUpByEmail(Id $id, DateTimeImmutable $date, Name $name, Email $email, string $hash, string $token): self
+    {
+        $user               = new self($id, $date, $name);
+        $user->email        = $email;
+        $user->passwordHash = $hash;
+        $user->confirmToken = $token;
+        $user->status       = Status::wait();
+
+        return $user;
+    }
+
+    /**
+     * Подтверждение учетной записи пользователя
+     */
+    public function confirmSignUp(): void
+    {
+        if (!$this->getStatus()->isWait()) {
+            throw new DomainException('Токен уже подтвержден.');
+        }
+
+        $this->status       = Status::active();
+        $this->confirmToken = null;
+    }
+
+    /**
+     * Запрос сброса пароля
+     *
+     * @param ResetToken        $token
+     * @param DateTimeImmutable $date
+     */
+    public function requestPasswordReset(ResetToken $token, DateTimeImmutable $date): void
+    {
+        if (!$this->getStatus()->isActive()) {
+            throw new DomainException('Пользователь ещё не активен.');
+        }
+
+        if (!$this->email) {
+            throw new DomainException('Email не определен.');
+        }
+
+        if ($this->resetToken && !$this->resetToken->isExpiredTo($date)) {
+            throw new DomainException('Сброс пароля уже запрошен.');
+        }
+
+        $this->resetToken = $token;
+    }
+
+    /**
+     * Сброс пароля
+     *
+     * @param DateTimeImmutable $date
+     * @param string            $hash
+     *
+     * @return void
+     */
+    public function passwordReset(DateTimeImmutable $date, string $hash): void
+    {
+        if (!$this->resetToken) {
+            throw new DomainException('Сброс пароля не был запрошен.');
+        }
+
+        if ($this->resetToken->isExpiredTo($date)) {
+            throw new DomainException('Токен сброса пароля уже истек.');
+        }
+
+        $this->passwordHash = $hash;
+        $this->resetToken   = null;
     }
 }

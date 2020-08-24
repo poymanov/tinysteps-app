@@ -24,7 +24,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * ),
  * @OA\Tag(
  *     name="auth",
- *     description="Авторизация учетный записей",
+ *     description="Авторизация учетных записей",
  * ),
  * @OA\Schema(
  *     schema="SuccessResponse",

@@ -59,6 +59,16 @@ class UserRepository
     }
 
     /**
+     * @param string $token
+     *
+     * @return User|null
+     */
+    public function findByResetToken(string $token): ?User
+    {
+        return $this->repo->findOneBy(['resetToken.token' => $token]);
+    }
+
+    /**
      * @param Email $email
      *
      * @return User

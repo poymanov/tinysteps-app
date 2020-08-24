@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Auth;
 
-use App\Model\User\UseCase\SignUp;
+use App\Model\User\UseCase\Reset;
 use App\Serializer\ValidationSerializer;
 use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,17 +17,19 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @OA\Schema(
- *     schema="AuthSignUpRequest",
- *     title="Регистрация пользователя",
- *     required={"first_name", "last_name", "email", "password", "password_confirmation"},
- *     @OA\Property(property="first_name", type="string", example="test", description="Имя пользователя", maxLength=255),
- *     @OA\Property(property="last_name", type="string", example="test", description="Фамилия пользователя", maxLength=255),
+ *     schema="AuthResetRequest",
+ *     title="Запрос на сброс пароля пользователя",
+ *     required={"email"},
  *     @OA\Property(property="email", type="string", example="test@test.ru", description="Email пользователя", maxLength=255),
+ * ),
+ * @OA\Schema(
+ *     schema="AuthResetReset",
+ *     title="Сброс пароля пользователя",
+ *     required={"password"},
  *     @OA\Property(property="password", type="string", example="123qwe", description="Пароль", minLength=6),
- *     @OA\Property(property="password_confirmation", type="string", example="123qwe", description="Подтверждение пароля", minLength=6),
  * )
  */
-class SignUpController extends AbstractController
+class ResetController extends AbstractController
 {
     /**
      * @var SerializerInterface
@@ -58,16 +60,17 @@ class SignUpController extends AbstractController
 
     /**
      * @OA\Post(
-     *     path="/auth/signup",
+     *     path="/auth/reset",
      *     tags={"auth"},
-     *     description="Регистрация пользователя",
+     *     description="Запрос сброса пароля",
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/AuthSignUpRequest")
+     *         @OA\JsonContent(ref="#/components/schemas/AuthResetRequest")
      *     ),
      *     @OA\Response(
-     *         response="201",
+     *         response="200",
      *         description="Успешный ответ",
+     *         @OA\JsonContent(ref="#/components/schemas/SuccessResponse")
      *     ),
      *     @OA\Response(
      *         response=400,
@@ -80,21 +83,19 @@ class SignUpController extends AbstractController
      *         @OA\JsonContent(ref="#/components/schemas/ErrorModelValidationFailed")
      *     ),
      * )
-     * @Route("/auth/signup", name="auth.signup", methods={"POST"})
      *
-     * @param Request                $request
+     * @Route("/auth/reset", name="auth.reset", methods={"POST"})
      *
-     * @param SignUp\Request\Handler $handler
+     * @param Request               $request
+     *
+     * @param Reset\Request\Handler $handler
      *
      * @return Response
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
      */
-    public function request(Request $request, SignUp\Request\Handler $handler): Response
+    public function request(Request $request, Reset\Request\Handler $handler): Response
     {
-        /** @var SignUp\Request\Command $command */
-        $command = $this->serializer->deserialize($request->getContent(), SignUp\Request\Command::class, 'json');
+        /** @var Reset\Request\Command $command */
+        $command = $this->serializer->deserialize($request->getContent(), Reset\Request\Command::class, 'json');
 
         $violations = $this->validator->validate($command);
 
@@ -106,15 +107,19 @@ class SignUpController extends AbstractController
 
         $handler->handle($command);
 
-        return $this->json([], Response::HTTP_CREATED);
+        return $this->json(['message' => 'Проверьте ваш email.'], Response::HTTP_OK);
     }
 
     /**
-     * @OA\Get(
-     *     path="/auth/signup/{token}",
+     * @OA\Post(
+     *     path="/auth/reset/{token}",
      *     tags={"auth"},
-     *     description="Подтверждение учетной записи",
-     *     @OA\Parameter(name="token", in="path", required=true, description="Токен подтверждения учетной записи", @OA\Schema(type="string")),
+     *     description="Сброс старого пароля и создание нового",
+     *     @OA\Parameter(name="token", in="path", required=true, description="Токен подтверждения сброса пароля учетной записи", @OA\Schema(type="string")),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/AuthResetReset")
+     *     ),
      *     @OA\Response(
      *         response="200",
      *         description="Успешный ответ",
@@ -125,21 +130,42 @@ class SignUpController extends AbstractController
      *         description="Прочие ошибки",
      *         @OA\JsonContent(ref="#/components/schemas/ErrorModel")
      *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Ошибки валидации",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorModelValidationFailed")
+     *     ),
      * )
      *
-     * @Route("/auth/signup/{token}", name="auth.signup.confirm")
+     * @Route("/auth/reset/{token}", name="auth.reset.reset")
      *
-     * @param Request $request
-     * @param string  $token
+     * @param Request             $request
+     * @param string              $token
+     * @param Reset\Reset\Handler $handler
      *
      * @return Response
+     * @throws \Exception
      */
-    public function confirm(Request $request, string $token, SignUp\Confirm\ByToken\Handler $handler): Response
+    public function reset(Request $request, string $token, Reset\Reset\Handler $handler): Response
     {
-        $command = new SignUp\Confirm\ByToken\Command($token);
+
+        $command = new Reset\Reset\Command($token);
+        $content = json_decode($request->getContent());
+
+        if ($content->password) {
+            $command->password = $content->password;
+        }
+
+        $violations = $this->validator->validate($command);
+
+        if (count($violations)) {
+            $json = $this->validationSerializer->serialize($violations);
+
+            return new JsonResponse($json, Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
+        }
 
         $handler->handle($command);
 
-        return $this->json(['message' => 'Ваш email успешно подтвержден.'], Response::HTTP_OK);
+        return $this->json(['message' => 'Пароль успешно изменен.'], Response::HTTP_OK);
     }
 }

@@ -197,32 +197,4 @@ class RequestTest extends DbWebTestCase
             'email' => 'existing-user@app.test',
         ]);
     }
-
-
-    //    public function getNotValidData(): FormDataDto
-    //    {
-    //        $data = [
-    //            'form[firstName]' => '',
-    //            'form[lastName]'  => '',
-    //            'form[email]'     => 'not-email',
-    //            'form[password]'  => '123',
-    //        ];
-    //
-    //        return new FormDataDto($data);
-    //    }
-    //
-    //
-
-    //
-    //    public function getExistingAliasData(): FormDataDto
-    //    {
-    //        $data = [
-    //            'form[firstName]' => 'First',
-    //            'form[lastName]'  => 'Last',
-    //            'form[email]'     => 'first-last@app.test',
-    //            'form[password]'  => '123qwe',
-    //        ];
-    //
-    //        return new FormDataDto($data);
-    //    }
 }

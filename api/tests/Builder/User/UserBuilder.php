@@ -7,6 +7,7 @@ namespace App\Tests\Builder\User;
 use App\Model\User\Entity\User\Email;
 use App\Model\User\Entity\User\Id;
 use App\Model\User\Entity\User\Name;
+use App\Model\User\Entity\User\ResetToken;
 use App\Model\User\Entity\User\Role;
 use App\Model\User\Entity\User\User;
 use BadMethodCallException;
@@ -46,7 +47,7 @@ class UserBuilder
     private $token;
 
     /**
-     * @var string
+     * @var bool
      */
     private $confirmed;
 
@@ -54,6 +55,11 @@ class UserBuilder
      * @var Role
      */
     private $role;
+
+    /**
+     * @var ResetToken
+     */
+    private $resetToken = null;
 
 
     /**
@@ -149,6 +155,19 @@ class UserBuilder
     }
 
     /**
+     * @param ResetToken $resetToken
+     *
+     * @return $this
+     */
+    public function withResetToken(ResetToken $resetToken): self
+    {
+        $clone             = clone $this;
+        $clone->resetToken = $resetToken;
+
+        return $clone;
+    }
+
+    /**
      * @return User
      * @throws Exception
      */
@@ -167,6 +186,10 @@ class UserBuilder
             if ($this->confirmed) {
                 $user->confirmSignUp();
             }
+        }
+
+        if ($this->resetToken) {
+            $user->requestPasswordReset($this->resetToken, new DateTimeImmutable());
         }
 
         if (!$user) {
