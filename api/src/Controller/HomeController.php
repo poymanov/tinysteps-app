@@ -18,12 +18,38 @@ use Symfony\Component\Routing\Annotation\Route;
  * @OA\Server(
  *     url="/"
  * ),
+ * @OA\Tag(
+ *     name="api",
+ *     description="Основное",
+ * ),
+ * @OA\Tag(
+ *     name="auth",
+ *     description="Авторизация учетный записей",
+ * ),
+ * @OA\Schema(
+ *     schema="SuccessResponse",
+ *     title="Успешное выполнение запроса",
+ *     type="object",
+ *     @OA\Property(property="message", type="string"),
+ * ),
  * @OA\Schema(
  *     schema="ErrorModel",
+ *     title="Ошибка запроса к серверу",
  *     type="object",
  *     @OA\Property(property="error", type="object", nullable=true,
  *         @OA\Property(property="message", type="string"),
  *     ),
+ * ),
+ * @OA\Schema(
+ *     schema="ErrorModelValidationFailed",
+ *     title="Ошибки валидации",
+ *     type="object",
+ *     @OA\Property(property="message", type="string"),
+ *          @OA\Property(property="errors", type="object",
+ *                  @OA\Property(property="text", type="array",
+ *                      @OA\Items(type="string", example="Значение не должно быть пустым.")
+ *                  ),
+ *              ),
  * ),
  */
 class HomeController extends AbstractController
@@ -31,7 +57,7 @@ class HomeController extends AbstractController
     /**
      * @OA\Get(
      *     path="/",
-     *     tags={"API"},
+     *     tags={"api"},
      *     description="Главная страница API",
      *     @OA\Response(
      *         response="200",
