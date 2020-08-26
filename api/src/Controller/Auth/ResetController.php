@@ -148,13 +148,10 @@ class ResetController extends AbstractController
      */
     public function reset(Request $request, string $token, Reset\Reset\Handler $handler): Response
     {
-
-        $command = new Reset\Reset\Command($token);
-        $content = json_decode($request->getContent());
-
-        if ($content->password) {
-            $command->password = $content->password;
-        }
+        /** @var Reset\Reset\Command $command */
+        $command = $this->serializer->deserialize($request->getContent(), Reset\Reset\Command::class, 'json', [
+            'object_to_populate' => new Reset\Reset\Command($token)
+        ]);
 
         $violations = $this->validator->validate($command);
 
