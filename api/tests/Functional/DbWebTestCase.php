@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
+use App\DataFixtures\UserFixture;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ConnectionException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -119,5 +120,22 @@ class DbWebTestCase extends WebTestCase
         }
 
         return $qb->execute()->fetchColumn();
+    }
+
+    /**
+     * Аутентификация пользовательского соединения
+     *
+     * @param array|null $credentials
+     */
+    public function auth(?array $credentials = null): void
+    {
+        if (is_null($credentials)) {
+            $credentials = UserFixture::userCredentials();
+        }
+
+        $this->client->setServerParameters([
+            'PHP_AUTH_USER' => $credentials['email'],
+            'PHP_AUTH_PW'   => $credentials['password'],
+        ]);
     }
 }

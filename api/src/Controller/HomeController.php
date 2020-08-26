@@ -18,6 +18,12 @@ use Symfony\Component\Routing\Annotation\Route;
  * @OA\Server(
  *     url="/"
  * ),
+ * @OA\SecurityScheme(
+ *     securityScheme="bearerAuth",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="JWT",
+ * ),
  * @OA\Tag(
  *     name="api",
  *     description="Основное",
@@ -25,6 +31,10 @@ use Symfony\Component\Routing\Annotation\Route;
  * @OA\Tag(
  *     name="auth",
  *     description="Авторизация учетных записей",
+ * ),
+ * @OA\Tag(
+ *     name="profile",
+ *     description="Профиль пользователя",
  * ),
  * @OA\Schema(
  *     schema="SuccessResponse",
@@ -64,11 +74,11 @@ use Symfony\Component\Routing\Annotation\Route;
  *     title="Ошибки валидации",
  *     type="object",
  *     @OA\Property(property="message", type="string"),
- *          @OA\Property(property="errors", type="object",
- *                  @OA\Property(property="text", type="array",
- *                      @OA\Items(type="string", example="Значение не должно быть пустым.")
- *                  ),
- *              ),
+ *     @OA\Property(property="errors", type="object",
+ *          @OA\Property(property="text", type="array",
+ *              @OA\Items(type="string", example="Значение не должно быть пустым.")
+ *          ),
+ *     ),
  * ),
  * @OA\Post(
  *     path="/token",
