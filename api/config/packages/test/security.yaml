@@ -1,0 +1,8 @@
+security:
+  encoders:
+    App\Security\UserIdentity: argon2i
+  firewalls:
+    api:
+      oauth2: false
+      http_basic:
+        provider: fetcher

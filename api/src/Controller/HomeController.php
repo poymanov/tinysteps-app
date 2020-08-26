@@ -33,6 +33,25 @@ use Symfony\Component\Routing\Annotation\Route;
  *     @OA\Property(property="message", type="string"),
  * ),
  * @OA\Schema(
+ *     schema="AuthTokenRequest",
+ *     title="Запрос аутентификационного токена",
+ *     required={"grant_type", "client_id", "client_secret", "username", "password"},
+ *     @OA\Property(property="grant_type", type="string", example="password", description="Тип получаемого токена"),
+ *     @OA\Property(property="client_id", type="string", example="oauth", description="Название клиентского приложения"),
+ *     @OA\Property(property="client_secret", type="string", example="secret", description="Ключ клиентского приложения"),
+ *     @OA\Property(property="username", type="string", example="user@app.test", description="Email пользователя"),
+ *     @OA\Property(property="password", type="string", example="123qwe", description="Пароль пользователя", minLength=6),
+ * )
+ * @OA\Schema(
+ *     schema="AuthTokenResponse",
+ *     title="Успешное получения токена аутентификации",
+ *     type="object",
+ *     @OA\Property(property="token_type", type="string", example="Bearer"),
+ *     @OA\Property(property="expires_in", type="string", example="3600"),
+ *     @OA\Property(property="access_token", type="string", example="zjliNjA4...."),
+ *     @OA\Property(property="refresh_token", type="string", example="f0e17d00..."),
+ * ),
+ * @OA\Schema(
  *     schema="ErrorModel",
  *     title="Ошибка запроса к серверу",
  *     type="object",
@@ -51,6 +70,27 @@ use Symfony\Component\Routing\Annotation\Route;
  *                  ),
  *              ),
  * ),
+ * @OA\Post(
+ *     path="/token",
+ *     tags={"auth"},
+ *     description="Аутентификация пользователя",
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\MediaType(mediaType="multipart/form-data",
+ *              @OA\Schema(ref="#/components/schemas/AuthTokenRequest")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response="200",
+ *         description="Успешный ответ",
+ *         @OA\JsonContent(ref="#/components/schemas/AuthTokenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Прочие ошибки",
+ *         @OA\JsonContent(ref="#/components/schemas/ErrorModel")
+ *     ),
+ * )
  */
 class HomeController extends AbstractController
 {

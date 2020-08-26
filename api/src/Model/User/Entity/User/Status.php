@@ -62,6 +62,16 @@ class Status
     }
 
     /**
+     * @param string $value
+     *
+     * @return bool
+     */
+    public static function isEqualActive(string $value): bool
+    {
+        return $value === self::STATUS_ACTIVE;
+    }
+
+    /**
      * @return bool
      */
     public function isWait(): bool
