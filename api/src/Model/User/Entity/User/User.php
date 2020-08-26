@@ -237,4 +237,14 @@ class User
         $this->passwordHash = $hash;
         $this->resetToken   = null;
     }
+
+    /**
+     * Изменение имени
+     *
+     * @param Name $name
+     */
+    public function changeName(Name $name): void
+    {
+        $this->name = $name;
+    }
 }

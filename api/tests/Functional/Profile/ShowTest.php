@@ -17,7 +17,7 @@ class ShowTest extends DbWebTestCase
     /**
      * Попытка получение профиля неавторизованным пользователем
      */
-    public function testMethod(): void
+    public function testNotAuth(): void
     {
         $this->client->request('GET', self::BASE_URL);
 

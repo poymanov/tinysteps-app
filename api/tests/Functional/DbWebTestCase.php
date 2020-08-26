@@ -63,8 +63,31 @@ class DbWebTestCase extends WebTestCase
      */
     protected function postWithContent(string $url, array $data): void
     {
+        $this->requestWithContent('POST', $url, $data);
+    }
+
+    /**
+     * Patch-запрос с передачей данных в json
+     *
+     * @param string $url
+     * @param array  $data
+     */
+    protected function patchWithContent(string $url, array $data): void
+    {
+        $this->requestWithContent('PATCH', $url, $data);
+    }
+
+    /**
+     * Запрос с передачей данных в json
+     *
+     * @param string $method
+     * @param string $url
+     * @param array  $data
+     */
+    protected function requestWithContent(string $method, string $url, array $data): void
+    {
         $this->client->request(
-            'POST',
+            $method,
             $url, [], [],
             ['CONTENT_TYPE' => 'application/json'], json_encode($data));
     }

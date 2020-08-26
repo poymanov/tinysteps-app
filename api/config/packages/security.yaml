@@ -18,4 +18,4 @@ security:
         ROLE_ADMIN:
             - ROLE_USER
     access_control:
-        - { path: ^/profile/show, role: ROLE_USER }
+        - { path: ^/profile/.*, role: ROLE_USER }

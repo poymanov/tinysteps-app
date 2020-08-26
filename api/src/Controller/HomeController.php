@@ -75,7 +75,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *     type="object",
  *     @OA\Property(property="message", type="string"),
  *     @OA\Property(property="errors", type="object",
- *          @OA\Property(property="text", type="array",
+ *          @OA\Property(property="field", type="array",
  *              @OA\Items(type="string", example="Значение не должно быть пустым.")
  *          ),
  *     ),
