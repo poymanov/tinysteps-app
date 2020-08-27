@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Model\User\Entity\User;
+namespace App\Model\Lesson\Entity\Goal;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\StringType;
 
 class StatusType extends StringType
 {
-    public const NAME = 'user_user_status';
+    public const NAME = 'lesson_goal_status';
 
     /**
      * @param mixed $value

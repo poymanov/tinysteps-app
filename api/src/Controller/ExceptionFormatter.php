@@ -8,6 +8,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -37,6 +38,9 @@ class ExceptionFormatter implements EventSubscriberInterface
         } elseif ($exception instanceof MethodNotAllowedHttpException) {
             $message = 'Неподдерживаемый тип запроса';
             $event->setResponse($this->buildErrorResponse($message, Response::HTTP_METHOD_NOT_ALLOWED));
+        } elseif ($exception instanceof AccessDeniedHttpException) {
+            $message = 'Вам запрещено выполнять данное действие';
+            $event->setResponse($this->buildErrorResponse($message, Response::HTTP_FORBIDDEN));
         } else {
             $event->setResponse($this->buildErrorResponse($exception->getMessage(), Response::HTTP_BAD_REQUEST));
         }

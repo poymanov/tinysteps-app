@@ -6,6 +6,7 @@ namespace App\DataFixtures;
 
 use App\Model\User\Entity\User\Email;
 use App\Model\User\Entity\User\Id;
+use App\Model\User\Entity\User\Role;
 use App\Model\User\Service\PasswordHasher;
 use App\Tests\Builder\User\UserBuilder;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -27,16 +28,27 @@ class UserFixture extends Fixture
 
     public function load(ObjectManager $manager)
     {
+
         $userCredentials = self::userCredentials();
-        $hash = $this->hasher->hash($userCredentials['password']);
 
         $user = (new UserBuilder())
             ->withId(new Id(self::USER_1_ID))
-            ->viaEmail(new Email($userCredentials['email']), $hash)
+            ->viaEmail(new Email($userCredentials['email']), $this->hasher->hash($userCredentials['password']))
             ->confirmed()
             ->build();
 
         $manager->persist($user);
+
+        $adminCredentials = self::adminCredentials();
+
+        $admin = (new UserBuilder())
+            ->viaEmail(new Email($adminCredentials['email']), $this->hasher->hash($adminCredentials['password']))
+            ->confirmed()
+            ->withRole(Role::admin())
+            ->build();
+
+        $manager->persist($admin);
+
         $manager->flush();
     }
 
@@ -47,6 +59,17 @@ class UserFixture extends Fixture
     {
         return [
             'email' => 'user@app.test',
+            'password'   => '123qwe',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function adminCredentials(): array
+    {
+        return [
+            'email' => 'admin@app.test',
             'password'   => '123qwe',
         ];
     }

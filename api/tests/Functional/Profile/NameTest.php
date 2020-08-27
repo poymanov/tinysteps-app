@@ -36,7 +36,7 @@ class NameTest extends DbWebTestCase
      */
     public function testEmpty(): void
     {
-        $this->auth();
+        $this->authAsUser();
 
         $this->patchWithContent(self::BASE_URL, []);
 
@@ -58,7 +58,7 @@ class NameTest extends DbWebTestCase
      */
     public function testTooLongFirstName(): void
     {
-        $this->auth();
+        $this->authAsUser();
 
         $this->patchWithContent(self::BASE_URL, $this->getTooLongFirstNameData());
 
@@ -79,7 +79,7 @@ class NameTest extends DbWebTestCase
      */
     public function testTooLongLastName(): void
     {
-        $this->auth();
+        $this->authAsUser();
 
         $this->patchWithContent(self::BASE_URL, $this->getTooLongLastNameData());
 
@@ -100,7 +100,7 @@ class NameTest extends DbWebTestCase
      */
     public function testSuccess(): void
     {
-        $this->auth();
+        $this->authAsUser();
 
         $this->patchWithContent(self::BASE_URL, $this->getSuccessData());
 

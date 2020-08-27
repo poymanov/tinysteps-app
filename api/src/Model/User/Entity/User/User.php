@@ -247,4 +247,16 @@ class User
     {
         $this->name = $name;
     }
+
+    /**
+     * @param Role $role
+     */
+    public function changeRole(Role $role): void
+    {
+        if ($this->role->isEqual($role)) {
+            throw new DomainException('Новая роль совпадает с текущей.');
+        }
+
+        $this->role = $role;
+    }
 }

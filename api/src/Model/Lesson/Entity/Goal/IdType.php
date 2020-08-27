@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Model\User\Entity\User;
+namespace App\Model\Lesson\Entity\Goal;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types\StringType;
+use Doctrine\DBAL\Types\GuidType;
 
-class StatusType extends StringType
+class IdType extends GuidType
 {
-    public const NAME = 'user_user_status';
+    public const NAME = 'lesson_goal_id';
 
     /**
      * @param mixed $value
@@ -18,17 +18,17 @@ class StatusType extends StringType
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        return $value instanceof Status ? $value->getValue(): $value;
+        return $value instanceof Id ? $value->getValue(): $value;
     }
 
     /**
      * @param mixed $value
      * @param AbstractPlatform $platform
-     * @return Status|mixed|null
+     * @return Id|mixed|null
      */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
-        return !empty($value) ? new Status($value): null;
+        return !empty($value) ? new Id($value): null;
     }
 
     /**

@@ -36,6 +36,10 @@ use Symfony\Component\Routing\Annotation\Route;
  *     name="profile",
  *     description="Профиль пользователя",
  * ),
+ * @OA\Tag(
+ *     name="goals",
+ *     description="Цели обучения",
+ * ),
  * @OA\Schema(
  *     schema="SuccessResponse",
  *     title="Успешное выполнение запроса",
@@ -67,6 +71,14 @@ use Symfony\Component\Routing\Annotation\Route;
  *     type="object",
  *     @OA\Property(property="error", type="object", nullable=true,
  *         @OA\Property(property="message", type="string"),
+ *     ),
+ * ),
+ * @OA\Schema(
+ *     schema="NotGrantedErrorModel",
+ *     title="Доступ только для администраторов",
+ *     type="object",
+ *     @OA\Property(property="error", type="object", nullable=true,
+ *         @OA\Property(property="message", type="string", example="Вам запрещено выполнять данное действие"),
  *     ),
  * ),
  * @OA\Schema(

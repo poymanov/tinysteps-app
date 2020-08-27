@@ -146,16 +146,28 @@ class DbWebTestCase extends WebTestCase
     }
 
     /**
+     * Аутентификация с ролью ROLE_USER
+     */
+    public function authAsUser(): void
+    {
+        $this->auth(UserFixture::userCredentials());
+    }
+
+    /**
+     * Аутентификация с ролью ROLE_ADMIN
+     */
+    public function authAsAdmin(): void
+    {
+        $this->auth(UserFixture::adminCredentials());
+    }
+
+    /**
      * Аутентификация пользовательского соединения
      *
      * @param array|null $credentials
      */
-    public function auth(?array $credentials = null): void
+    public function auth(array $credentials): void
     {
-        if (is_null($credentials)) {
-            $credentials = UserFixture::userCredentials();
-        }
-
         $this->client->setServerParameters([
             'PHP_AUTH_USER' => $credentials['email'],
             'PHP_AUTH_PW'   => $credentials['password'],

@@ -29,7 +29,7 @@ class ShowTest extends DbWebTestCase
      */
     public function testSuccess(): void
     {
-        $this->auth();
+        $this->authAsUser();
 
         $this->client->request('GET', self::BASE_URL);
 

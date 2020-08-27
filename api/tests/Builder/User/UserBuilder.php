@@ -129,19 +129,6 @@ class UserBuilder
     }
 
     /**
-     * @param string $alias
-     *
-     * @return $this
-     */
-    public function withAlias(string $alias): self
-    {
-        $clone        = clone $this;
-        $clone->alias = $alias;
-
-        return $clone;
-    }
-
-    /**
      * @param Role $role
      *
      * @return $this
@@ -190,6 +177,10 @@ class UserBuilder
 
         if ($this->resetToken) {
             $user->requestPasswordReset($this->resetToken, new DateTimeImmutable());
+        }
+
+        if ($this->role) {
+            $user->changeRole($this->role);
         }
 
         if (!$user) {
