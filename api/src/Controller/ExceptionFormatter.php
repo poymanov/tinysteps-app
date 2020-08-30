@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Doctrine\DBAL\Exception\DriverException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,6 +42,9 @@ class ExceptionFormatter implements EventSubscriberInterface
         } elseif ($exception instanceof AccessDeniedHttpException) {
             $message = 'Вам запрещено выполнять данное действие';
             $event->setResponse($this->buildErrorResponse($message, Response::HTTP_FORBIDDEN));
+        } elseif ($exception instanceof DriverException) {
+            $message = 'Ошибка запроса к базе данных';
+            $event->setResponse($this->buildErrorResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR));
         } else {
             $event->setResponse($this->buildErrorResponse($exception->getMessage(), Response::HTTP_BAD_REQUEST));
         }

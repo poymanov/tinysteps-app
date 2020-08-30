@@ -31,7 +31,7 @@ class CreateTest extends DbWebTestCase
     }
 
     /**
-     * Попытка создания цели пользователем без роли ROLE_ADMIN;
+     * Попытка создания цели пользователем без роли ROLE_ADMIN
      */
     public function testNotAdmin(): void
     {

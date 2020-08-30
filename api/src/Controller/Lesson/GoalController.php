@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Lesson;
 
+use App\Model\Lesson\Entity\Goal\Goal as GoalModel;
+use App\Model\Lesson\Service\GoalResponseFormatter;
 use App\Model\Lesson\UseCase\Goal;
 use App\Serializer\ValidationSerializer;
 use OpenApi\Annotations as OA;
@@ -22,10 +24,26 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  *     title="Создание цели обучения",
  *     required={"name"},
  *     @OA\Property(property="name", type="string", example="Прочие потребности", description="Название цели обучения", maxLength=255),
+ * ),
+ * @OA\Schema(
+ *     schema="GoalShowResponse",
+ *     title="Данные по цели обучения",
+ *     type="object",
+ *     @OA\Property(property="id", type="string", example="00000000-0000-0000-0000-000000000001"),
+ *     @OA\Property(property="alias", type="string", example="user@app.test"),
+ *     @OA\Property(property="name", type="string", example="Для переезда"),
+ *     @OA\Property(property="status", type="string", description="Статус активности", example="active"),
+ *     @OA\Property(property="sort", type="integer", description="Порядок сортировки", example="1"),
+ *     @OA\Property(property="created_at", type="string", description="Дата создания", example="2020-01-02 10:00:00"),
  * )
  */
 class GoalController extends AbstractController
 {
+    /**
+     * @var GoalResponseFormatter
+     */
+    private GoalResponseFormatter $responseFormatter;
+
     /**
      * @var SerializerInterface
      */
@@ -42,12 +60,18 @@ class GoalController extends AbstractController
     private ValidationSerializer $validationSerializer;
 
     /**
-     * @param SerializerInterface  $serializer
-     * @param ValidatorInterface   $validator
-     * @param ValidationSerializer $validationSerializer
+     * @param GoalResponseFormatter $responseFormatter
+     * @param SerializerInterface   $serializer
+     * @param ValidatorInterface    $validator
+     * @param ValidationSerializer  $validationSerializer
      */
-    public function __construct(SerializerInterface $serializer, ValidatorInterface $validator, ValidationSerializer $validationSerializer)
-    {
+    public function __construct(
+        GoalResponseFormatter $responseFormatter,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+        ValidationSerializer $validationSerializer
+    ) {
+        $this->responseFormatter    = $responseFormatter;
         $this->serializer           = $serializer;
         $this->validator            = $validator;
         $this->validationSerializer = $validationSerializer;
@@ -117,5 +141,46 @@ class GoalController extends AbstractController
         $handler->handle($command);
 
         return $this->json([], Response::HTTP_CREATED);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/goals/{id}",
+     *     tags={"goals"},
+     *     description="Получение цели обучения",
+     *     @OA\Parameter(name="id", in="path", required=true, description="Идентификатор цели обучения", @OA\Schema(type="string")),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     },
+     *     @OA\Response(
+     *         response="200",
+     *         description="Успешный ответ",
+     *         @OA\JsonContent(ref="#/components/schemas/GoalShowResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Неавторизованный запрос профиля",
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Доступ только для администраторов",
+     *         @OA\JsonContent(ref="#/components/schemas/NotGrantedErrorModel")
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="ID указан в неправильном формате",
+     *     )
+     * )
+     *
+     * @Route("/goals/{id}", name="goals.show", methods={"GET"})
+     * @IsGranted("ROLE_ADMIN")
+     *
+     * @param GoalModel $goal
+     *
+     * @return Response
+     */
+    public function show(GoalModel $goal): Response
+    {
+        return $this->json($this->responseFormatter->full($goal));
     }
 }
