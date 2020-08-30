@@ -183,4 +183,74 @@ class GoalController extends AbstractController
     {
         return $this->json($this->responseFormatter->full($goal));
     }
+
+    /**
+     * @OA\Get(
+     *     path="/goals/{id}/change-name",
+     *     tags={"goals"},
+     *     description="Изменение названия цели обучения",
+     *     @OA\Parameter(name="id", in="path", required=true, description="Идентификатор цели обучения", @OA\Schema(type="string")),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     },
+     *     @OA\Response(
+     *         response="200",
+     *         description="Успешный ответ",
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Название уже сущестует",
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Неавторизованный запрос профиля",
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Доступ только для администраторов",
+     *         @OA\JsonContent(ref="#/components/schemas/NotGrantedErrorModel")
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Ошибки валидации",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorModelValidationFailed")
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="ID указан в неправильном формате",
+     *     )
+     * )
+     *
+     *
+     * @Route("/goals/{id}/change-name", name="goals.change-name", methods={"PATCH"})
+     * @IsGranted("ROLE_ADMIN")
+     *
+     * @param Request           $request
+     * @param GoalModel         $goal
+     *
+     * @param Goal\Name\Handler $handler
+     *
+     * @return Response
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function changeName(Request $request, GoalModel $goal, Goal\Name\Handler $handler): Response
+    {
+        /** @var Goal\Name\Command $command */
+        $command = $this->serializer->deserialize($request->getContent(), Goal\Name\Command::class, 'json', [
+            'object_to_populate' => new Goal\Name\Command($goal->getId()->getValue())
+        ]);
+
+        $violations = $this->validator->validate($command);
+
+        if (count($violations)) {
+            $json = $this->validationSerializer->serialize($violations);
+
+            return new JsonResponse($json, Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
+        }
+
+        $handler->handle($command);
+
+        return $this->json([], Response::HTTP_OK);
+    }
 }

@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Model\Lesson\Entity\Goal;
 
+use App\Model\EntityNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 
 class GoalRepository
 {
@@ -29,6 +32,21 @@ class GoalRepository
     }
 
     /**
+     * @param Id $id
+     *
+     * @return Goal
+     */
+    public function get(Id $id): Goal
+    {
+        if (!$goal = $this->repo->find($id->getValue())) {
+            throw new EntityNotFoundException('Цель обучения не найдена.');
+        }
+
+        /** @var Goal $goal */
+        return $goal;
+    }
+
+    /**
      * @param string $alias
      *
      * @return Goal|null
@@ -36,6 +54,22 @@ class GoalRepository
     public function findByAlias(string $alias): ?Goal
     {
         return $this->repo->findOneBy(['alias' => $alias]);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    public function hasByName(string $name): bool
+    {
+        return $this->repo->createQueryBuilder('t')
+                ->select('COUNT(t.id)')
+                ->andWhere('t.name = :name')
+                ->setParameter(':name', $name)
+                ->getQuery()->getSingleScalarResult() > 0;
     }
 
     /**

@@ -117,4 +117,14 @@ class Goal
     {
         return $this->createdAt;
     }
+
+    /**
+     * Изменение имени
+     *
+     * @param string $name
+     */
+    public function changeName(string $name): void
+    {
+        $this->name = $name;
+    }
 }
