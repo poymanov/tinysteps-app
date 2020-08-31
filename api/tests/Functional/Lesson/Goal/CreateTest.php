@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CreateTest extends DbWebTestCase
 {
-    private const BASE_URL = '/goals';
+    private const BASE_URL = '/goals/create';
 
     /**
      * Попытка GET-запроса

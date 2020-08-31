@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class NameTest extends DbWebTestCase
 {
-    private const BASE_URL = '/goals/' . GoalFixture::GOAL_1_ID . '/change-name';
+    private const BASE_URL = '/goals/update/name/' . GoalFixture::GOAL_1_ID;
 
     /**
      * Попытка GET-запроса
@@ -56,7 +56,7 @@ class NameTest extends DbWebTestCase
      */
     public function testNotValidUuid(): void
     {
-        $this->client->request('PATCH', '/goals/123/change-name');
+        $this->client->request('PATCH', '/goals/update/name/123');
 
         $data = $this->getJsonData();
 
@@ -74,7 +74,7 @@ class NameTest extends DbWebTestCase
      */
     public function testNotFound(): void
     {
-        $this->client->request('PATCH', '/goals/00000000-0000-0000-0000-000000000099/change-name');
+        $this->client->request('PATCH', '/goals/update/name/00000000-0000-0000-0000-000000000099');
 
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }

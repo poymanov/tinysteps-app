@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AliasTest extends DbWebTestCase
 {
-    private const BASE_URL = '/goals/' . GoalFixture::GOAL_1_ID . '/change-alias';
+    private const BASE_URL = '/goals/update/alias/' . GoalFixture::GOAL_1_ID;
 
     /**
      * Попытка GET-запроса
@@ -56,7 +56,7 @@ class AliasTest extends DbWebTestCase
      */
     public function testNotValidUuid(): void
     {
-        $this->client->request('PATCH', '/goals/123/change-alias');
+        $this->client->request('PATCH', '/goals/update/alias/123');
 
         $data = $this->getJsonData();
 
@@ -74,7 +74,7 @@ class AliasTest extends DbWebTestCase
      */
     public function testNotFound(): void
     {
-        $this->client->request('PATCH', '/goals/00000000-0000-0000-0000-000000000099/change-alias');
+        $this->client->request('PATCH', '/goals/update/alias/00000000-0000-0000-0000-000000000099');
 
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
@@ -177,7 +177,7 @@ class AliasTest extends DbWebTestCase
         self::assertEmpty($data);
 
         $this->assertIsInDatabase('lesson_goals', [
-            'id'   => GoalFixture::GOAL_1_ID,
+            'id'    => GoalFixture::GOAL_1_ID,
             'alias' => 'test-test',
         ]);
     }

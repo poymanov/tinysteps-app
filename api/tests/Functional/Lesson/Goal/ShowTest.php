@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ShowTest extends DbWebTestCase
 {
-    private const BASE_URL = '/goals/' . GoalFixture::GOAL_1_ID;
+    private const BASE_URL = '/goals/show/one/' . GoalFixture::GOAL_1_ID;
 
     /**
      * Попытка просмотра цели без аутентификации
@@ -47,7 +47,7 @@ class ShowTest extends DbWebTestCase
      */
     public function testNotValidUuid(): void
     {
-        $this->client->request('GET', '/goals/123');
+        $this->client->request('GET', '/goals/show/one/123');
 
         $data = $this->getJsonData();
 
@@ -65,7 +65,7 @@ class ShowTest extends DbWebTestCase
      */
     public function testNotFound(): void
     {
-        $this->client->request('GET', '/goals/00000000-0000-0000-0000-000000000099');
+        $this->client->request('GET', '/goals/show/one/00000000-0000-0000-0000-000000000099');
 
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
