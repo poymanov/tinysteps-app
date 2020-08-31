@@ -28,8 +28,10 @@ class Status
      */
     public function __construct(string $value)
     {
+        $value = mb_strtolower($value);
+
         Assert::notEmpty($value);
-        Assert::oneOf($value, self::STATUSES);
+        Assert::oneOf($value, self::STATUSES, 'Неизвестный статус.');
 
         $this->value = $value;
     }

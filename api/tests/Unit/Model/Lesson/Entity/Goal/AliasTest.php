@@ -12,8 +12,6 @@ class AliasTest extends TestCase
 {
     public function testNotValid(): void
     {
-        $goal = (new GoalBuilder())->build();
-
         self::expectExceptionMessage('Неправильный формат alias.');
 
         new Alias('Test Test');

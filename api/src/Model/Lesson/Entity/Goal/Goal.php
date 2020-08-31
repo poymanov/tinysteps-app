@@ -137,4 +137,14 @@ class Goal
     {
         $this->alias = $alias;
     }
+
+    /**
+     * Изменение статуса
+     *
+     * @param Status $status
+     */
+    public function changeStatus(Status $status): void
+    {
+        $this->status = $status;
+    }
 }

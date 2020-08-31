@@ -11,7 +11,7 @@ use App\Model\Lesson\Entity\Goal\Status;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
-class GoalTest extends TestCase
+class CreateTest extends TestCase
 {
     public function testSuccess(): void
     {

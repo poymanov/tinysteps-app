@@ -8,9 +8,9 @@ use App\Tests\Fixtures\GoalFixture;
 use App\Tests\Functional\DbWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class AliasTest extends DbWebTestCase
+class StatusTest extends DbWebTestCase
 {
-    private const BASE_URL = '/goals/update/alias/' . GoalFixture::GOAL_1_ID;
+    private const BASE_URL = '/goals/update/status/' . GoalFixture::GOAL_1_ID;
 
     /**
      * Попытка GET-запроса
@@ -52,11 +52,11 @@ class AliasTest extends DbWebTestCase
     }
 
     /**
-     * Изменение alias цели обучения c uuid в неправильном формате
+     * Изменение статуса цели обучения c uuid в неправильном формате
      */
     public function testNotValidUuid(): void
     {
-        $this->client->request('PATCH', '/goals/update/alias/123');
+        $this->client->request('PATCH', '/goals/update/status/123');
 
         $data = $this->getJsonData();
 
@@ -70,17 +70,17 @@ class AliasTest extends DbWebTestCase
     }
 
     /**
-     * Попытка изменения alias несуществующей цели обучения
+     * Попытка изменения статуса несуществующей цели обучения
      */
     public function testNotFound(): void
     {
-        $this->client->request('PATCH', '/goals/update/alias/00000000-0000-0000-0000-000000000099');
+        $this->client->request('PATCH', '/goals/update/status/00000000-0000-0000-0000-000000000099');
 
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
     /**
-     * Значение нового alias не указано
+     * Значение нового статуса не указано
      */
     public function testEmpty(): void
     {
@@ -95,34 +95,13 @@ class AliasTest extends DbWebTestCase
         self::assertEquals([
             'message' => 'Ошибки валидации',
             'errors'  => [
-                'alias' => ['Значение не должно быть пустым.'],
+                'status' => ['Значение не должно быть пустым.'],
             ],
         ], $data);
     }
 
     /**
-     * Значение нового alias слишком длинное
-     */
-    public function testTooLongAlias(): void
-    {
-        $this->authAsAdmin();
-
-        $this->patchWithContent(self::BASE_URL, $this->getTooLongAliasData());
-
-        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'message' => 'Ошибки валидации',
-            'errors'  => [
-                'alias' => ['Значение слишком длинное. Должно быть равно 255 символам или меньше.'],
-            ],
-        ], $data);
-    }
-
-    /**
-     * Значение нового alias некорректное
+     * Значение нового статуса не входит в список допустимых статусов
      */
     public function testNotValid(): void
     {
@@ -136,33 +115,13 @@ class AliasTest extends DbWebTestCase
 
         self::assertEquals([
             'error' => [
-                'message' => 'Неправильный формат alias.',
+                'message' => 'Неизвестный статус.',
             ],
         ], $data);
     }
 
     /**
-     * Цель с указанным alias уже существует
-     */
-    public function testExisted(): void
-    {
-        $this->authAsAdmin();
-
-        $this->patchWithContent(self::BASE_URL, $this->getExistedData());
-
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'error' => [
-                'message' => 'Цель с таким alias уже существует.',
-            ],
-        ], $data);
-    }
-
-    /**
-     * Успешное изменение alias
+     * Успешное изменение статуса
      */
     public function testSuccess(): void
     {
@@ -177,48 +136,28 @@ class AliasTest extends DbWebTestCase
         self::assertEmpty($data);
 
         $this->assertIsInDatabase('lesson_goals', [
-            'id'    => GoalFixture::GOAL_1_ID,
-            'alias' => 'test-test',
+            'id'     => GoalFixture::GOAL_1_ID,
+            'status' => 'archived',
         ]);
     }
 
     /**
-     * Данные с длинным alias
-     */
-    public function getTooLongAliasData(): array
-    {
-        return [
-            'alias' => bin2hex(openssl_random_pseudo_bytes(150)),
-        ];
-    }
-
-    /**
-     * Данные для некорректного alias
+     * Данные для некорректного статуса
      */
     public function getNotValidData(): array
     {
         return [
-            'alias' => 'Test Test',
+            'status' => 'Test',
         ];
     }
 
     /**
-     * Данные для существующего alias
-     */
-    public function getExistedData(): array
-    {
-        return [
-            'alias' => 'dla-uceby',
-        ];
-    }
-
-    /**
-     * Данные для успешного изменения alias
+     * Данные для успешного изменения статуса
      */
     public function getSuccessData(): array
     {
         return [
-            'alias' => 'test-test',
+            'status' => 'archived',
         ];
     }
 }
