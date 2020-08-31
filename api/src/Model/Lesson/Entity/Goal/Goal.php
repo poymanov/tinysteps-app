@@ -6,6 +6,7 @@ namespace App\Model\Lesson\Entity\Goal;
 
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use DomainException;
 
 /**
  * @ORM\Entity
@@ -146,5 +147,19 @@ class Goal
     public function changeStatus(Status $status): void
     {
         $this->status = $status;
+    }
+
+    /**
+     * Изменение порядка сортировки
+     *
+     * @param int $sort
+     */
+    public function changeSort(int $sort): void
+    {
+        if ($sort <= 0) {
+            throw new DomainException('Значение порядка должно быть больше нуля.');
+        }
+
+        $this->sort = $sort;
     }
 }

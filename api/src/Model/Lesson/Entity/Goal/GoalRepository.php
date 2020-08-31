@@ -47,6 +47,23 @@ class GoalRepository
     }
 
     /**
+     * Получение цели обучения по порядку сортировки
+     *
+     * @param int $sort
+     *
+     * @return Goal
+     */
+    public function getBySort(int $sort): Goal
+    {
+        if (!$goal = $this->repo->findOneBy(['sort' => $sort])) {
+            throw new EntityNotFoundException('Цель обучения не найдена.');
+        }
+
+        /** @var Goal $goal */
+        return $goal;
+    }
+
+    /**
      * @param string $name
      *
      * @return bool
