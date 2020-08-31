@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Model\Lesson\Entity\Goal;
 
+use App\Model\Lesson\Entity\Goal\Alias;
 use App\Model\Lesson\Entity\Goal\Goal;
 use App\Model\Lesson\Entity\Goal\Id;
 use App\Model\Lesson\Entity\Goal\Status;
@@ -16,7 +17,7 @@ class GoalTest extends TestCase
     {
         $goal = new Goal(
             $id = Id::next(),
-            $alias = 'alias',
+            $alias = new Alias('alias'),
             $name = 'name',
             $sort = 1,
             $createdAt = new DateTimeImmutable(),

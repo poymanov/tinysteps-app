@@ -24,10 +24,10 @@ class Goal
     private Id $id;
 
     /**
-     * @var string
-     * @ORM\Column(type="string")
+     * @var Alias
+     * @ORM\Column(type="lesson_goal_alias")
      */
-    private string $alias;
+    private Alias $alias;
 
     /**
      * @var string
@@ -55,12 +55,12 @@ class Goal
 
     /**
      * @param Id                $id
-     * @param string            $alias
+     * @param Alias             $alias
      * @param string            $name
      * @param int               $sort
      * @param DateTimeImmutable $createdAt
      */
-    public function __construct(Id $id, string $alias, string $name, int $sort, DateTimeImmutable $createdAt)
+    public function __construct(Id $id, Alias $alias, string $name, int $sort, DateTimeImmutable $createdAt)
     {
         $this->id        = $id;
         $this->alias     = $alias;
@@ -79,9 +79,9 @@ class Goal
     }
 
     /**
-     * @return string
+     * @return Alias
      */
-    public function getAlias(): string
+    public function getAlias(): Alias
     {
         return $this->alias;
     }
@@ -126,5 +126,15 @@ class Goal
     public function changeName(string $name): void
     {
         $this->name = $name;
+    }
+
+    /**
+     * Изменение alias
+     *
+     * @param Alias $alias
+     */
+    public function changeAlias(Alias $alias): void
+    {
+        $this->alias = $alias;
     }
 }

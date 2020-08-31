@@ -13,6 +13,7 @@ doctrine:
             user_user_role: 'App\Model\User\Entity\User\RoleType'
             user_user_status: 'App\Model\User\Entity\User\StatusType'
             lesson_goal_id: 'App\Model\Lesson\Entity\Goal\IdType'
+            lesson_goal_alias: 'App\Model\Lesson\Entity\Goal\AliasType'
             lesson_goal_status: 'App\Model\Lesson\Entity\Goal\StatusType'
     orm:
         auto_generate_proxy_classes: true

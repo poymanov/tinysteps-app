@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Fixtures;
 
+use App\Model\Lesson\Entity\Goal\Alias;
 use App\Model\Lesson\Entity\Goal\Id;
 use App\Tests\Builder\Lesson\GoalBuilder;
 use Ausi\SlugGenerator\SlugGenerator;
@@ -64,7 +65,7 @@ class GoalFixture extends Fixture
 
             $goal = (new GoalBuilder())
                 ->withId(new Id($uuid))
-                ->withAlias($alias)
+                ->withAlias(new Alias($alias))
                 ->withName($name)
                 ->withSort($sort)
                 ->withCreatedAt(new DateTimeImmutable($properties['createdAt']))

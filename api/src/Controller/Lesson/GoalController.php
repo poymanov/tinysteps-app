@@ -185,7 +185,7 @@ class GoalController extends AbstractController
     }
 
     /**
-     * @OA\Get(
+     * @OA\Patch (
      *     path="/goals/{id}/change-name",
      *     tags={"goals"},
      *     description="Изменение названия цели обучения",
@@ -221,7 +221,6 @@ class GoalController extends AbstractController
      *     )
      * )
      *
-     *
      * @Route("/goals/{id}/change-name", name="goals.change-name", methods={"PATCH"})
      * @IsGranted("ROLE_ADMIN")
      *
@@ -238,7 +237,78 @@ class GoalController extends AbstractController
     {
         /** @var Goal\Name\Command $command */
         $command = $this->serializer->deserialize($request->getContent(), Goal\Name\Command::class, 'json', [
-            'object_to_populate' => new Goal\Name\Command($goal->getId()->getValue())
+            'object_to_populate' => new Goal\Name\Command($goal->getId()->getValue()),
+            'ignored_attributes' => ['id'],
+        ]);
+
+        $violations = $this->validator->validate($command);
+
+        if (count($violations)) {
+            $json = $this->validationSerializer->serialize($violations);
+
+            return new JsonResponse($json, Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
+        }
+
+        $handler->handle($command);
+
+        return $this->json([], Response::HTTP_OK);
+    }
+
+    /**
+     * @OA\Patch (
+     *     path="/goals/{id}/change-alias",
+     *     tags={"goals"},
+     *     description="Изменение alias цели обучения",
+     *     @OA\Parameter(name="id", in="path", required=true, description="Идентификатор цели обучения", @OA\Schema(type="string")),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     },
+     *     @OA\Response(
+     *         response="200",
+     *         description="Успешный ответ",
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Alias уже сущестует",
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Неавторизованный запрос профиля",
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Доступ только для администраторов",
+     *         @OA\JsonContent(ref="#/components/schemas/NotGrantedErrorModel")
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Ошибки валидации",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorModelValidationFailed")
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="ID указан в неправильном формате",
+     *     )
+     * )
+     *
+     * @Route("/goals/{id}/change-alias", name="goals.change-alias", methods={"PATCH"})
+     * @IsGranted("ROLE_ADMIN")
+     *
+     * @param Request            $request
+     * @param GoalModel          $goal
+     *
+     * @param Goal\Alias\Handler $handler
+     *
+     * @return Response
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function changeAlias(Request $request, GoalModel $goal, Goal\Alias\Handler $handler): Response
+    {
+        /** @var Goal\Alias\Command $command */
+        $command = $this->serializer->deserialize($request->getContent(), Goal\Alias\Command::class, 'json', [
+            'object_to_populate' => new Goal\Alias\Command($goal->getId()->getValue()),
+            'ignored_attributes' => ['id'],
         ]);
 
         $violations = $this->validator->validate($command);

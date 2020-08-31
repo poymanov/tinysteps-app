@@ -8,9 +8,9 @@ use App\Tests\Fixtures\GoalFixture;
 use App\Tests\Functional\DbWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class NameTest extends DbWebTestCase
+class AliasTest extends DbWebTestCase
 {
-    private const BASE_URL = '/goals/' . GoalFixture::GOAL_1_ID . '/change-name';
+    private const BASE_URL = '/goals/' . GoalFixture::GOAL_1_ID . '/change-alias';
 
     /**
      * Попытка GET-запроса
@@ -52,11 +52,11 @@ class NameTest extends DbWebTestCase
     }
 
     /**
-     * Изменение названия цели обучения c uuid в неправильном формате
+     * Изменение alias цели обучения c uuid в неправильном формате
      */
     public function testNotValidUuid(): void
     {
-        $this->client->request('PATCH', '/goals/123/change-name');
+        $this->client->request('PATCH', '/goals/123/change-alias');
 
         $data = $this->getJsonData();
 
@@ -70,17 +70,17 @@ class NameTest extends DbWebTestCase
     }
 
     /**
-     * Запрос несуществующей цели обучения
+     * Попытка изменения alias несуществующей цели обучения
      */
     public function testNotFound(): void
     {
-        $this->client->request('PATCH', '/goals/00000000-0000-0000-0000-000000000099/change-name');
+        $this->client->request('PATCH', '/goals/00000000-0000-0000-0000-000000000099/change-alias');
 
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
     /**
-     * Значение нового имени не указано
+     * Значение нового alias не указано
      */
     public function testEmpty(): void
     {
@@ -95,19 +95,19 @@ class NameTest extends DbWebTestCase
         self::assertEquals([
             'message' => 'Ошибки валидации',
             'errors'  => [
-                'name' => ['Значение не должно быть пустым.'],
+                'alias' => ['Значение не должно быть пустым.'],
             ],
         ], $data);
     }
 
     /**
-     * Значение нового имени слишком длинное
+     * Значение нового alias слишком длинное
      */
-    public function testTooLongName(): void
+    public function testTooLongAlias(): void
     {
         $this->authAsAdmin();
 
-        $this->patchWithContent(self::BASE_URL, $this->getTooLongNameData());
+        $this->patchWithContent(self::BASE_URL, $this->getTooLongAliasData());
 
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
 
@@ -116,13 +116,33 @@ class NameTest extends DbWebTestCase
         self::assertEquals([
             'message' => 'Ошибки валидации',
             'errors'  => [
-                'name' => ['Значение слишком длинное. Должно быть равно 255 символам или меньше.'],
+                'alias' => ['Значение слишком длинное. Должно быть равно 255 символам или меньше.'],
             ],
         ], $data);
     }
 
     /**
-     * Цель с указанным именем уже существует
+     * Значение нового alias некорректное
+     */
+    public function testNotValid(): void
+    {
+        $this->authAsAdmin();
+
+        $this->patchWithContent(self::BASE_URL, $this->getNotValidData());
+
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+
+        $data = $this->getJsonData();
+
+        self::assertEquals([
+            'error' => [
+                'message' => 'Неправильный формат alias.',
+            ],
+        ], $data);
+    }
+
+    /**
+     * Цель с указанным alias уже существует
      */
     public function testExisted(): void
     {
@@ -136,13 +156,13 @@ class NameTest extends DbWebTestCase
 
         self::assertEquals([
             'error' => [
-                'message' => 'Цель с таким наименованием уже существует.',
+                'message' => 'Цель с таким alias уже существует.',
             ],
         ], $data);
     }
 
     /**
-     * Успешное изменение имени
+     * Успешное изменение alias
      */
     public function testSuccess(): void
     {
@@ -158,27 +178,37 @@ class NameTest extends DbWebTestCase
 
         $this->assertIsInDatabase('lesson_goals', [
             'id'   => GoalFixture::GOAL_1_ID,
-            'name' => 'Прочие потребности',
+            'alias' => 'test-test',
         ]);
     }
 
     /**
-     * Данные с длинным названием цели
+     * Данные с длинным alias
      */
-    public function getTooLongNameData(): array
+    public function getTooLongAliasData(): array
     {
         return [
-            'name' => bin2hex(openssl_random_pseudo_bytes(150)),
+            'alias' => bin2hex(openssl_random_pseudo_bytes(150)),
         ];
     }
 
     /**
-     * Данные для существующей цели
+     * Данные для некорректного alias
+     */
+    public function getNotValidData(): array
+    {
+        return [
+            'alias' => 'Test Test',
+        ];
+    }
+
+    /**
+     * Данные для существующего alias
      */
     public function getExistedData(): array
     {
         return [
-            'name' => 'Для учебы',
+            'alias' => 'dla-uceby',
         ];
     }
 
@@ -188,7 +218,7 @@ class NameTest extends DbWebTestCase
     public function getSuccessData(): array
     {
         return [
-            'name' => 'Прочие потребности',
+            'alias' => 'test-test',
         ];
     }
 }

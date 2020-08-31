@@ -19,7 +19,7 @@ class GoalResponseFormatter
     {
         return [
             'id'         => $goal->getId()->getValue(),
-            'alias'      => $goal->getAlias(),
+            'alias'      => $goal->getAlias()->getValue(),
             'name'       => $goal->getName(),
             'status'     => $goal->getStatus()->getValue(),
             'sort'       => $goal->getSort(),

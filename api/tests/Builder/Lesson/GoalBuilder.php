@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Builder\Lesson;
 
+use App\Model\Lesson\Entity\Goal\Alias;
 use App\Model\Lesson\Entity\Goal\Goal;
 use App\Model\Lesson\Entity\Goal\Id;
 use DateTimeImmutable;
@@ -17,9 +18,9 @@ class GoalBuilder
     private Id $id;
 
     /**
-     * @var string
+     * @var Alias
      */
-    private string $alias;
+    private Alias $alias;
 
     /**
      * @var string
@@ -44,7 +45,7 @@ class GoalBuilder
     public function __construct()
     {
         $this->id        = Id::next();
-        $this->alias     = 'cel-zanjatija';
+        $this->alias     = new Alias('cel-zanjatija');
         $this->name      = 'Цель занятия';
         $this->sort      = 1;
         $this->createdAt = new DateTimeImmutable();
@@ -77,11 +78,11 @@ class GoalBuilder
     }
 
     /**
-     * @param string $alias
+     * @param Alias $alias
      *
      * @return $this
      */
-    public function withAlias(string $alias): self
+    public function withAlias(Alias $alias): self
     {
         $clone        = clone $this;
         $clone->alias = $alias;

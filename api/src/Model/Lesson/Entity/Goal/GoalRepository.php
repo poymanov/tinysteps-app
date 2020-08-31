@@ -47,16 +47,6 @@ class GoalRepository
     }
 
     /**
-     * @param string $alias
-     *
-     * @return Goal|null
-     */
-    public function findByAlias(string $alias): ?Goal
-    {
-        return $this->repo->findOneBy(['alias' => $alias]);
-    }
-
-    /**
      * @param string $name
      *
      * @return bool
@@ -69,6 +59,22 @@ class GoalRepository
                 ->select('COUNT(t.id)')
                 ->andWhere('t.name = :name')
                 ->setParameter(':name', $name)
+                ->getQuery()->getSingleScalarResult() > 0;
+    }
+
+    /**
+     * @param Alias $alias
+     *
+     * @return bool
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    public function hasByAlias(Alias $alias): bool
+    {
+        return $this->repo->createQueryBuilder('t')
+                ->select('COUNT(t.id)')
+                ->andWhere('t.alias = :alias')
+                ->setParameter(':alias', $alias->getValue())
                 ->getQuery()->getSingleScalarResult() > 0;
     }
 
