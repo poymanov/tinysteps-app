@@ -6,6 +6,7 @@ namespace App\Tests\Fixtures;
 
 use App\Model\Lesson\Entity\Goal\Alias;
 use App\Model\Lesson\Entity\Goal\Id;
+use App\Model\Lesson\Entity\Goal\Status;
 use App\Tests\Builder\Lesson\GoalBuilder;
 use Ausi\SlugGenerator\SlugGenerator;
 use DateTimeImmutable;
@@ -21,6 +22,8 @@ class GoalFixture extends Fixture
     public const GOAL_3_ID = '00000000-0000-0000-0000-000000000003';
 
     public const GOAL_4_ID = '00000000-0000-0000-0000-000000000004';
+
+    public const GOAL_5_ID = '00000000-0000-0000-0000-000000000005';
 
     /**
      * @var SlugGenerator
@@ -54,22 +57,32 @@ class GoalFixture extends Fixture
                 'name'      => 'Для работы',
                 'createdAt' => '2020-01-04 10:00:00',
             ],
+            self::GOAL_5_ID => [
+                'name'      => 'Прочее',
+                'createdAt' => '2020-01-05 10:00:00',
+                'status'    => 'archived',
+            ],
         ];
 
         $sort = 0;
 
         foreach ($goals as $uuid => $properties) {
-            $name = $properties['name'];
+            $name  = $properties['name'];
             $alias = $this->slugGenerator->generate($name);
             $sort++;
 
-            $goal = (new GoalBuilder())
+            $builder = (new GoalBuilder())
                 ->withId(new Id($uuid))
                 ->withAlias(new Alias($alias))
                 ->withName($name)
                 ->withSort($sort)
-                ->withCreatedAt(new DateTimeImmutable($properties['createdAt']))
-                ->build();
+                ->withCreatedAt(new DateTimeImmutable($properties['createdAt']));
+
+            if (isset($properties['status'])) {
+                $builder = $builder->withStatus(new Status($properties['status']));
+            }
+
+            $goal = $builder->build();
 
             $manager->persist($goal);
         }

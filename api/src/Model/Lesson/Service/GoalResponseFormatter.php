@@ -23,7 +23,7 @@ class GoalResponseFormatter
             'name'       => $goal->getName(),
             'status'     => $goal->getStatus()->getValue(),
             'sort'       => $goal->getSort(),
-            'created_at' => $goal->getCreatedAt()->format('Y-m-d H:i'),
+            'created_at' => $goal->getCreatedAt()->format('Y-m-d H:i:s'),
         ];
     }
 }

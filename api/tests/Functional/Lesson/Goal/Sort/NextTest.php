@@ -86,7 +86,7 @@ class NextTest extends DbWebTestCase
     {
         $this->authAsAdmin();
 
-        $this->client->request('PATCH', '/goals/sort/next/' . GoalFixture::GOAL_4_ID);
+        $this->client->request('PATCH', '/goals/sort/next/' . GoalFixture::GOAL_5_ID);
 
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 
@@ -115,12 +115,12 @@ class NextTest extends DbWebTestCase
         self::assertEmpty($data);
 
         $this->assertIsInDatabase('lesson_goals', [
-            'id' => GoalFixture::GOAL_1_ID,
+            'id'   => GoalFixture::GOAL_1_ID,
             'sort' => 2,
         ]);
 
         $this->assertIsInDatabase('lesson_goals', [
-            'id' => GoalFixture::GOAL_2_ID,
+            'id'   => GoalFixture::GOAL_2_ID,
             'sort' => 1,
         ]);
     }

@@ -7,6 +7,7 @@ namespace App\Tests\Builder\Lesson;
 use App\Model\Lesson\Entity\Goal\Alias;
 use App\Model\Lesson\Entity\Goal\Goal;
 use App\Model\Lesson\Entity\Goal\Id;
+use App\Model\Lesson\Entity\Goal\Status;
 use DateTimeImmutable;
 use Exception;
 
@@ -26,6 +27,11 @@ class GoalBuilder
      * @var string
      */
     private string $name;
+
+    /**
+     * @var Status|null
+     */
+    private ?Status $status = null;
 
     /**
      * @var int
@@ -91,6 +97,19 @@ class GoalBuilder
     }
 
     /**
+     * @param Status $status
+     *
+     * @return $this
+     */
+    public function withStatus(Status $status): self
+    {
+        $clone         = clone $this;
+        $clone->status = $status;
+
+        return $clone;
+    }
+
+    /**
      * @param int $sort
      *
      * @return $this
@@ -122,7 +141,13 @@ class GoalBuilder
      */
     public function build(): Goal
     {
-        return new Goal($this->id, $this->alias, $this->name, $this->sort, $this->createdAt);
+        $goal = new Goal($this->id, $this->alias, $this->name, $this->sort, $this->createdAt);
+
+        if ($this->status) {
+            $goal->changeStatus($this->status);
+        }
+
+        return $goal;
     }
 
 }

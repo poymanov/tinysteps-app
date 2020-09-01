@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Functional\Lesson\Goal;
+namespace App\Tests\Functional\Lesson\Goal\Show;
 
 use App\Tests\Fixtures\GoalFixture;
 use App\Tests\Functional\DbWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class ShowTest extends DbWebTestCase
+class OneTest extends DbWebTestCase
 {
     private const BASE_URL = '/goals/show/one/' . GoalFixture::GOAL_1_ID;
 
@@ -84,12 +84,12 @@ class ShowTest extends DbWebTestCase
         $data = $this->getJsonData();
 
         self::assertEquals([
-            'id' => GoalFixture::GOAL_1_ID,
-            'alias' => 'dla-pereezda',
-            'name' => 'Для переезда',
-            'status' => 'active',
-            'sort' => 1,
-            'created_at' => '2020-01-01 10:00',
+            'id'         => GoalFixture::GOAL_1_ID,
+            'alias'      => 'dla-pereezda',
+            'name'       => 'Для переезда',
+            'status'     => 'active',
+            'sort'       => 1,
+            'created_at' => '2020-01-01 10:00:00',
         ], $data);
     }
 }

@@ -130,7 +130,7 @@ class CreateTest extends DbWebTestCase
             'alias'  => 'procie-potrebnosti',
             'name'   => 'Прочие потребности',
             'status' => 'active',
-            'sort'   => 5,
+            'sort'   => 6,
         ]);
     }
 
