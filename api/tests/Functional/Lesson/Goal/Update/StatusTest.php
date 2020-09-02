@@ -2,23 +2,27 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Functional\Lesson\Goal;
+namespace App\Tests\Functional\Lesson\Goal\Update;
 
 use App\Tests\Fixtures\GoalFixture;
 use App\Tests\Functional\DbWebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class StatusTest extends DbWebTestCase
 {
-    private const BASE_URL = '/goals/update/status/' . GoalFixture::GOAL_1_ID;
+    private const BASE_URL = '/goals/update/status/';
+
+    private const BASE_URL_GOAL_1 = self::BASE_URL . GoalFixture::GOAL_1_ID;
+
+    private const BASE_METHOD = Request::METHOD_PATCH;
 
     /**
      * Попытка GET-запроса
      */
     public function testInvalidMethod(): void
     {
-        $this->client->request('GET', self::BASE_URL);
-        self::assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED);
+        $this->assertInvalidMethod(Request::METHOD_GET, self::BASE_URL_GOAL_1);
     }
 
     /**
@@ -26,9 +30,7 @@ class StatusTest extends DbWebTestCase
      */
     public function testNotAuth(): void
     {
-        $this->client->request('PATCH', self::BASE_URL);
-
-        self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+        $this->assertNotAuth(self::BASE_METHOD, self::BASE_URL_GOAL_1);
     }
 
     /**
@@ -36,19 +38,7 @@ class StatusTest extends DbWebTestCase
      */
     public function testNotAdmin(): void
     {
-        $this->authAsUser();
-
-        $this->client->request('PATCH', self::BASE_URL);
-
-        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'error' => [
-                'message' => 'Вам запрещено выполнять данное действие',
-            ],
-        ], $data);
+        $this->assertNotAdmin(self::BASE_METHOD, self::BASE_URL_GOAL_1);
     }
 
     /**
@@ -56,17 +46,7 @@ class StatusTest extends DbWebTestCase
      */
     public function testNotValidUuid(): void
     {
-        $this->client->request('PATCH', '/goals/update/status/123');
-
-        $data = $this->getJsonData();
-
-        self::assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
-
-        self::assertEquals([
-            'error' => [
-                'message' => 'Ошибка запроса к базе данных',
-            ],
-        ], $data);
+        $this->assertNotValidUuid(self::BASE_METHOD, self::BASE_URL . '123');
     }
 
     /**
@@ -74,9 +54,7 @@ class StatusTest extends DbWebTestCase
      */
     public function testNotFound(): void
     {
-        $this->client->request('PATCH', '/goals/update/status/00000000-0000-0000-0000-000000000099');
-
-        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        $this->assertNotFound(self::BASE_METHOD, self::BASE_URL . '00000000-0000-0000-0000-000000000099');
     }
 
     /**
@@ -84,20 +62,14 @@ class StatusTest extends DbWebTestCase
      */
     public function testEmpty(): void
     {
-        $this->authAsAdmin();
-
-        $this->patchWithContent(self::BASE_URL, []);
-
-        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'message' => 'Ошибки валидации',
-            'errors'  => [
+        $this->assertValidationFailed(
+            self::BASE_METHOD,
+            self::BASE_URL_GOAL_1,
+            [],
+            [
                 'status' => ['Значение не должно быть пустым.'],
-            ],
-        ], $data);
+            ]
+        );
     }
 
     /**
@@ -105,19 +77,12 @@ class StatusTest extends DbWebTestCase
      */
     public function testNotValid(): void
     {
-        $this->authAsAdmin();
-
-        $this->patchWithContent(self::BASE_URL, $this->getNotValidData());
-
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'error' => [
-                'message' => 'Неизвестный статус.',
-            ],
-        ], $data);
+        $this->assertBadRequest(
+            self::BASE_METHOD,
+            self::BASE_URL_GOAL_1,
+            $this->getNotValidData(),
+            'Неизвестный статус.'
+        );
     }
 
     /**
@@ -127,11 +92,9 @@ class StatusTest extends DbWebTestCase
     {
         $this->authAsAdmin();
 
-        $this->patchWithContent(self::BASE_URL, $this->getSuccessData());
+        $this->patchWithContent(self::BASE_URL_GOAL_1, $this->getSuccessData());
 
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
-
-        $data = $this->getJsonData();
+        $data = $this->getJsonData(Response::HTTP_OK);
 
         self::assertEmpty($data);
 

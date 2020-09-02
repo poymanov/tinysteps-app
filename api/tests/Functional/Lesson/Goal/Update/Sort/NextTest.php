@@ -2,23 +2,27 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Functional\Lesson\Goal\Sort;
+namespace App\Tests\Functional\Lesson\Goal\Update\Sort;
 
 use App\Tests\Fixtures\GoalFixture;
 use App\Tests\Functional\DbWebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class NextTest extends DbWebTestCase
 {
-    private const BASE_URL = '/goals/sort/next/' . GoalFixture::GOAL_1_ID;
+    private const BASE_URL = '/goals/sort/next/';
+
+    private const BASE_URL_GOAL_1 = '/goals/sort/next/' . GoalFixture::GOAL_1_ID;
+
+    private const BASE_METHOD = Request::METHOD_PATCH;
 
     /**
      * Попытка GET-запроса
      */
     public function testInvalidMethod(): void
     {
-        $this->client->request('GET', self::BASE_URL);
-        self::assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED);
+        $this->assertInvalidMethod(Request::METHOD_GET, self::BASE_URL_GOAL_1);
     }
 
     /**
@@ -26,9 +30,7 @@ class NextTest extends DbWebTestCase
      */
     public function testNotAuth(): void
     {
-        $this->client->request('PATCH', self::BASE_URL);
-
-        self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+        $this->assertNotAuth(self::BASE_METHOD, self::BASE_URL_GOAL_1);
     }
 
     /**
@@ -36,19 +38,7 @@ class NextTest extends DbWebTestCase
      */
     public function testNotAdmin(): void
     {
-        $this->authAsUser();
-
-        $this->client->request('PATCH', self::BASE_URL);
-
-        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'error' => [
-                'message' => 'Вам запрещено выполнять данное действие',
-            ],
-        ], $data);
+        $this->assertNotAdmin(self::BASE_METHOD, self::BASE_URL_GOAL_1);
     }
 
     /**
@@ -56,17 +46,7 @@ class NextTest extends DbWebTestCase
      */
     public function testNotValidUuid(): void
     {
-        $this->client->request('PATCH', '/goals/sort/next/123');
-
-        $data = $this->getJsonData();
-
-        self::assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
-
-        self::assertEquals([
-            'error' => [
-                'message' => 'Ошибка запроса к базе данных',
-            ],
-        ], $data);
+        $this->assertNotValidUuid(self::BASE_METHOD, self::BASE_URL . '123');
     }
 
     /**
@@ -74,9 +54,7 @@ class NextTest extends DbWebTestCase
      */
     public function testNotFound(): void
     {
-        $this->client->request('PATCH', '/goals/sort/next/00000000-0000-0000-0000-000000000099');
-
-        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        $this->assertNotFound(self::BASE_METHOD, self::BASE_URL . '00000000-0000-0000-0000-000000000099');
     }
 
     /**
@@ -86,11 +64,9 @@ class NextTest extends DbWebTestCase
     {
         $this->authAsAdmin();
 
-        $this->client->request('PATCH', '/goals/sort/next/' . GoalFixture::GOAL_5_ID);
+        $this->client->request(self::BASE_METHOD, self::BASE_URL . GoalFixture::GOAL_5_ID);
 
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $data = $this->getJsonData();
+        $data = $this->getJsonData(Response::HTTP_BAD_REQUEST);
 
         self::assertEquals([
             'error' => [
@@ -106,11 +82,9 @@ class NextTest extends DbWebTestCase
     {
         $this->authAsAdmin();
 
-        $this->client->request('PATCH', self::BASE_URL);
+        $this->client->request(self::BASE_METHOD, self::BASE_URL_GOAL_1);
 
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
-
-        $data = $this->getJsonData();
+        $data = $this->getJsonData(Response::HTTP_OK);
 
         self::assertEmpty($data);
 

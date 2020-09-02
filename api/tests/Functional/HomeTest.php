@@ -27,9 +27,8 @@ class HomeTest extends DbWebTestCase
     public function testNotFound()
     {
         $this->client->request('GET', '/123');
-        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
 
-        $data = $this->getJsonData();
+        $data = $this->getJsonData(Response::HTTP_NOT_FOUND);
 
         self::assertEquals([
             'error' => [
@@ -44,9 +43,8 @@ class HomeTest extends DbWebTestCase
     public function testMethodNotAllowed()
     {
         $this->client->request('POST', '/');
-        self::assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED);
 
-        $data = $this->getJsonData();
+        $data = $this->getJsonData(Response::HTTP_METHOD_NOT_ALLOWED);
 
         self::assertEquals([
             'error' => [

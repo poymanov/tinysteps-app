@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Profile;
 
 use App\DataFixtures\UserFixture;
 use App\Tests\Functional\DbWebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class NameTest extends DbWebTestCase
@@ -17,7 +18,7 @@ class NameTest extends DbWebTestCase
      */
     public function testInvalidMethod(): void
     {
-        $this->client->request('GET', self::BASE_URL);
+        $this->client->request(Request::METHOD_GET, self::BASE_URL);
         self::assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED);
     }
 
@@ -26,7 +27,7 @@ class NameTest extends DbWebTestCase
      */
     public function testNotAuth(): void
     {
-        $this->client->request('PATCH', self::BASE_URL);
+        $this->client->request(Request::METHOD_PATCH, self::BASE_URL);
 
         self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }
@@ -36,21 +37,15 @@ class NameTest extends DbWebTestCase
      */
     public function testEmpty(): void
     {
-        $this->authAsUser();
-
-        $this->patchWithContent(self::BASE_URL, []);
-
-        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'message' => 'Ошибки валидации',
-            'errors'  => [
+        $this->assertValidationFailed(
+            Request::METHOD_PATCH,
+            self::BASE_URL,
+            [],
+            [
                 'first' => ['Значение не должно быть пустым.'],
                 'last'  => ['Значение не должно быть пустым.'],
-            ],
-        ], $data);
+            ]
+        );
     }
 
     /**
@@ -58,20 +53,14 @@ class NameTest extends DbWebTestCase
      */
     public function testTooLongFirstName(): void
     {
-        $this->authAsUser();
-
-        $this->patchWithContent(self::BASE_URL, $this->getTooLongFirstNameData());
-
-        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'message' => 'Ошибки валидации',
-            'errors'  => [
+        $this->assertValidationFailed(
+            Request::METHOD_PATCH,
+            self::BASE_URL,
+            $this->getTooLongFirstNameData(),
+            [
                 'first' => ['Значение слишком длинное. Должно быть равно 255 символам или меньше.'],
-            ],
-        ], $data);
+            ]
+        );
     }
 
     /**
@@ -79,20 +68,14 @@ class NameTest extends DbWebTestCase
      */
     public function testTooLongLastName(): void
     {
-        $this->authAsUser();
-
-        $this->patchWithContent(self::BASE_URL, $this->getTooLongLastNameData());
-
-        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'message' => 'Ошибки валидации',
-            'errors'  => [
+        $this->assertValidationFailed(
+            Request::METHOD_PATCH,
+            self::BASE_URL,
+            $this->getTooLongLastNameData(),
+            [
                 'last' => ['Значение слишком длинное. Должно быть равно 255 символам или меньше.'],
-            ],
-        ], $data);
+            ]
+        );
     }
 
     /**
@@ -109,9 +92,9 @@ class NameTest extends DbWebTestCase
         self::assertEmpty($this->getJsonData());
 
         $this->assertIsInDatabase('user_users', [
-            'id' => UserFixture::USER_1_ID,
+            'id'         => UserFixture::USER_1_ID,
             'name_first' => 'test',
-            'name_last' => 'test',
+            'name_last'  => 'test',
         ]);
     }
 
@@ -134,7 +117,7 @@ class NameTest extends DbWebTestCase
     public function getTooLongFirstNameData(): array
     {
         return array_merge($this->getSuccessData(), [
-            'first' => bin2hex(openssl_random_pseudo_bytes(150)),
+            'first' => $this->getRandomString(),
         ]);
     }
 
@@ -144,7 +127,7 @@ class NameTest extends DbWebTestCase
     public function getTooLongLastNameData(): array
     {
         return array_merge($this->getSuccessData(), [
-            'last' => bin2hex(openssl_random_pseudo_bytes(150)),
+            'last' => $this->getRandomString(),
         ]);
     }
 }

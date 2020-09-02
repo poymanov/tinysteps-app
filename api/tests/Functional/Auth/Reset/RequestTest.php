@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Auth\Reset;
 
 use App\Tests\Functional\DbWebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class RequestTest extends DbWebTestCase
@@ -16,8 +17,7 @@ class RequestTest extends DbWebTestCase
      */
     public function testInvalidMethod()
     {
-        $this->client->request('GET', self::BASE_URL);
-        self::assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED);
+        $this->assertInvalidMethod(Request::METHOD_GET, self::BASE_URL);
     }
 
     /**
@@ -25,18 +25,12 @@ class RequestTest extends DbWebTestCase
      */
     public function testNotValidEmail()
     {
-        $this->postWithContent(self::BASE_URL, $this->getNotValidEmailData());
-
-        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'message' => 'Ошибки валидации',
-            'errors'  => [
-                'email' => ['Значение адреса электронной почты недопустимо.'],
-            ],
-        ], $data);
+        $this->assertValidationFailed(
+            Request::METHOD_POST,
+            self::BASE_URL,
+            $this->getNotValidEmailData(),
+            ['email' => ['Значение адреса электронной почты недопустимо.']]
+        );
     }
 
     /**
@@ -44,17 +38,12 @@ class RequestTest extends DbWebTestCase
      */
     public function testNotExistingEmail()
     {
-        $this->postWithContent(self::BASE_URL, $this->getNotExistedEmailData());
-
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'error' => [
-                'message' => 'Пользователь не найден.',
-            ],
-        ], $data);
+        $this->assertBadRequest(
+            Request::METHOD_POST,
+            self::BASE_URL,
+            $this->getNotExistedEmailData(),
+            'Пользователь не найден.'
+        );
     }
 
     /**
@@ -62,17 +51,12 @@ class RequestTest extends DbWebTestCase
      */
     public function testNotConfirmedEmail()
     {
-        $this->postWithContent(self::BASE_URL, $this->getNotConfirmedData());
-
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'error' => [
-                'message' => 'Пользователь ещё не активен.',
-            ],
-        ], $data);
+        $this->assertBadRequest(
+            Request::METHOD_POST,
+            self::BASE_URL,
+            $this->getNotConfirmedData(),
+            'Пользователь ещё не активен.'
+        );
     }
 
     /**
@@ -80,17 +64,12 @@ class RequestTest extends DbWebTestCase
      */
     public function testAlreadyRequestedReset()
     {
-        $this->postWithContent(self::BASE_URL, $this->getAlreadyRequestData());
-
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'error' => [
-                'message' => 'Сброс пароля уже запрошен.',
-            ],
-        ], $data);
+        $this->assertBadRequest(
+            Request::METHOD_POST,
+            self::BASE_URL,
+            $this->getAlreadyRequestData(),
+            'Сброс пароля уже запрошен.'
+        );
     }
 
     /**
@@ -102,9 +81,7 @@ class RequestTest extends DbWebTestCase
 
         $this->postWithContent(self::BASE_URL, $successData);
 
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
-
-        $data = $this->getJsonData();
+        $data = $this->getJsonData(Response::HTTP_OK);
 
         self::assertEquals([
             'message' => 'Проверьте ваш email.',

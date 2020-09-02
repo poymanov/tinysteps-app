@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
-use App\DataFixtures\UserFixture;
-use Doctrine\DBAL\Connection;
+use App\Tests\Functional\Helpers\AssertionsTrait;
+use App\Tests\Functional\Helpers\AuthTrait;
+use App\Tests\Functional\Helpers\DbTrait;
+use App\Tests\Functional\Helpers\RequestTrait;
 use Doctrine\DBAL\ConnectionException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -13,6 +15,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class DbWebTestCase extends WebTestCase
 {
+    use DbTrait, AuthTrait, RequestTrait, AssertionsTrait;
+
     /**
      * @var EntityManagerInterface
      */
@@ -44,133 +48,14 @@ class DbWebTestCase extends WebTestCase
     }
 
     /**
-     * Получение результата json-запроса в виде массива
+     * Получение строки случайной длины
      *
-     * @return array
-     */
-    protected function getJsonData(): array
-    {
-        self::assertJson($content = $this->client->getResponse()->getContent());
-
-        return json_decode($content, true);
-    }
-
-    /**
-     * Post-запрос с передачей данных в json
+     * @param int $length
      *
-     * @param string $url
-     * @param array  $data
+     * @return string
      */
-    protected function postWithContent(string $url, array $data): void
+    public function getRandomString($length = 300): string
     {
-        $this->requestWithContent('POST', $url, $data);
-    }
-
-    /**
-     * Patch-запрос с передачей данных в json
-     *
-     * @param string $url
-     * @param array  $data
-     */
-    protected function patchWithContent(string $url, array $data): void
-    {
-        $this->requestWithContent('PATCH', $url, $data);
-    }
-
-    /**
-     * Запрос с передачей данных в json
-     *
-     * @param string $method
-     * @param string $url
-     * @param array  $data
-     */
-    protected function requestWithContent(string $method, string $url, array $data): void
-    {
-        $this->client->request(
-            $method,
-            $url, [], [],
-            ['CONTENT_TYPE' => 'application/json'], json_encode($data));
-    }
-
-    /**
-     * Проверка: в таблице существует запись
-     *
-     * @param string $table
-     * @param array  $params
-     */
-    public function assertIsInDatabase(string $table, array $params): void
-    {
-        self::assertTrue($this->countByParams($table, $params) > 0, 'Item not found in table ' . $table);
-    }
-
-    /**
-     * Проверка: в таблице отсутствует запись
-     *
-     * @param string $table
-     * @param array  $params
-     */
-    public function assertIsNotInDatabase(string $table, array $params): void
-    {
-        self::assertTrue($this->countByParams($table, $params) == 0, 'Item found in table ' . $table);
-    }
-
-    /**
-     * Подсчет количества строк в таблице с учетом параметров
-     *
-     * @param string $table
-     * @param array  $params
-     *
-     * @return int
-     */
-    private function countByParams(string $table, array $params): int
-    {
-        /** @var $testCase WebTestCase */
-        $testCase = $this;
-
-        /** @var $connection Connection */
-        $connection = $testCase->em->getConnection();
-
-        $qb = $connection->createQueryBuilder()
-            ->select('COUNT (*)')
-            ->from($table);
-
-        foreach ($params as $param => $value) {
-            if (is_null($value)) {
-                $qb->andWhere("{$param} IS NULL");
-            } else {
-                $qb->andWhere("{$param} = :{$param}")->setParameter(":{$param}", $value);
-            }
-        }
-
-        return $qb->execute()->fetchColumn();
-    }
-
-    /**
-     * Аутентификация с ролью ROLE_USER
-     */
-    public function authAsUser(): void
-    {
-        $this->auth(UserFixture::userCredentials());
-    }
-
-    /**
-     * Аутентификация с ролью ROLE_ADMIN
-     */
-    public function authAsAdmin(): void
-    {
-        $this->auth(UserFixture::adminCredentials());
-    }
-
-    /**
-     * Аутентификация пользовательского соединения
-     *
-     * @param array|null $credentials
-     */
-    public function auth(array $credentials): void
-    {
-        $this->client->setServerParameters([
-            'PHP_AUTH_USER' => $credentials['email'],
-            'PHP_AUTH_PW'   => $credentials['password'],
-        ]);
+        return bin2hex(openssl_random_pseudo_bytes(intval($length / 2)));
     }
 }

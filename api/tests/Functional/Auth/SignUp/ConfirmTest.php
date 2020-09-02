@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Auth\SignUp;
 
 use App\Tests\Functional\DbWebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ConfirmTest extends DbWebTestCase
@@ -16,11 +17,9 @@ class ConfirmTest extends DbWebTestCase
      */
     public function testNotExistedToken(): void
     {
-        $this->client->request('GET',self::BASE_URL . '/123');
+        $this->client->request(Request::METHOD_GET, self::BASE_URL . '/123');
 
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $data = $this->getJsonData();
+        $data = $this->getJsonData(Response::HTTP_BAD_REQUEST);
 
         self::assertEquals([
             'error' => [
@@ -34,7 +33,7 @@ class ConfirmTest extends DbWebTestCase
      */
     public function testSuccess(): void
     {
-        $this->client->request('GET',self::BASE_URL . '/not-confirmed-token');
+        $this->client->request(Request::METHOD_GET, self::BASE_URL . '/not-confirmed-token');
 
         self::assertResponseIsSuccessful();
 

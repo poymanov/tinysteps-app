@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Auth\Reset;
 
 use App\Tests\Functional\DbWebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ResetTest extends DbWebTestCase
@@ -16,8 +17,7 @@ class ResetTest extends DbWebTestCase
      */
     public function testInvalidMethod()
     {
-        $this->client->request('GET', self::BASE_URL);
-        self::assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED);
+        $this->assertInvalidMethod(Request::METHOD_GET, self::BASE_URL);
     }
 
     /**
@@ -25,18 +25,12 @@ class ResetTest extends DbWebTestCase
      */
     public function testShortPassword(): void
     {
-        $this->postWithContent(self::BASE_URL . '/123', $this->getNotValidPasswordData());
-
-        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'message' => 'Ошибки валидации',
-            'errors'  => [
-                'password' => ['Значение слишком короткое. Должно быть равно 6 символам или больше.'],
-            ],
-        ], $data);
+        $this->assertValidationFailed(
+            Request::METHOD_POST,
+            self::BASE_URL . '/123',
+            $this->getNotValidPasswordData(),
+            ['password' => ['Значение слишком короткое. Должно быть равно 6 символам или больше.']]
+        );
     }
 
     /**
@@ -44,17 +38,12 @@ class ResetTest extends DbWebTestCase
      */
     public function testNotExisted(): void
     {
-        $this->postWithContent(self::BASE_URL . '/1234', $this->getSuccessData());
-
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'error' => [
-                'message' => 'Неизвестный токен.',
-            ],
-        ], $data);
+        $this->assertBadRequest(
+            Request::METHOD_POST,
+            self::BASE_URL . '/1234',
+            $this->getSuccessData(),
+            'Неизвестный токен.'
+        );
     }
 
     /**
@@ -62,17 +51,12 @@ class ResetTest extends DbWebTestCase
      */
     public function testExpiredToken()
     {
-        $this->postWithContent(self::BASE_URL . '/456', $this->getSuccessData());
-
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'error' => [
-                'message' => 'Токен сброса пароля уже истек.',
-            ],
-        ], $data);
+        $this->assertBadRequest(
+            Request::METHOD_POST,
+            self::BASE_URL . '/456',
+            $this->getSuccessData(),
+            'Токен сброса пароля уже истек.'
+        );
     }
 
     /**
@@ -82,9 +66,7 @@ class ResetTest extends DbWebTestCase
     {
         $this->postWithContent(self::BASE_URL . '/123', $this->getSuccessData());
 
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
-
-        $data = $this->getJsonData();
+        $data = $this->getJsonData(Response::HTTP_OK);
 
         self::assertEquals([
             'message' => 'Пароль успешно изменен.',

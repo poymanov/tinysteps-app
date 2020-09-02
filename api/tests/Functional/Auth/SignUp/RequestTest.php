@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Auth\SignUp;
 
 use App\Tests\Functional\DbWebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class RequestTest extends DbWebTestCase
@@ -23,22 +24,18 @@ class RequestTest extends DbWebTestCase
      */
     public function testNotValid(): void
     {
-        $this->postWithContent(self::BASE_URL, []);
-
-        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'message' => 'Ошибки валидации',
-            'errors'  => [
+        $this->assertValidationFailed(
+            Request::METHOD_POST,
+            self::BASE_URL,
+            [],
+            [
                 'firstName'            => ['Значение не должно быть пустым.'],
                 'lastName'             => ['Значение не должно быть пустым.'],
                 'email'                => ['Значение не должно быть пустым.'],
                 'password'             => ['Значение не должно быть пустым.'],
                 'passwordConfirmation' => ['Значение не должно быть пустым.'],
-            ],
-        ], $data);
+            ]
+        );
     }
 
     /**
@@ -46,18 +43,14 @@ class RequestTest extends DbWebTestCase
      */
     public function testPasswordConfirmation(): void
     {
-        $this->postWithContent(self::BASE_URL, $this->getNotEqualPasswordData());
-
-        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'message' => 'Ошибки валидации',
-            'errors'  => [
-                'passwordConfirmation' => ['Введенные пароли должны совпадать.'],
-            ],
-        ], $data);
+        $this->assertValidationFailed(
+            Request::METHOD_POST,
+            self::BASE_URL,
+            $this->getNotEqualPasswordData(),
+            [
+                'passwordConfirmation' => ['Введенные пароли должны совпадать.']
+            ]
+        );
     }
 
     /**
@@ -65,18 +58,14 @@ class RequestTest extends DbWebTestCase
      */
     public function testShortPassword(): void
     {
-        $this->postWithContent(self::BASE_URL, $this->getShortPasswordData());
-
-        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'message' => 'Ошибки валидации',
-            'errors'  => [
-                'password' => ['Значение слишком короткое. Должно быть равно 6 символам или больше.'],
-            ],
-        ], $data);
+        $this->assertValidationFailed(
+            Request::METHOD_POST,
+            self::BASE_URL,
+            $this->getShortPasswordData(),
+            [
+                'password' => ['Значение слишком короткое. Должно быть равно 6 символам или больше.']
+            ]
+        );
     }
 
     /**
@@ -84,18 +73,14 @@ class RequestTest extends DbWebTestCase
      */
     public function testNotValidEmail(): void
     {
-        $this->postWithContent(self::BASE_URL, $this->getNotValidEmailData());
-
-        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'message' => 'Ошибки валидации',
-            'errors'  => [
+        $this->assertValidationFailed(
+            Request::METHOD_POST,
+            self::BASE_URL,
+            $this->getNotValidEmailData(),
+            [
                 'email' => ['Значение адреса электронной почты недопустимо.'],
-            ],
-        ], $data);
+            ]
+        );
     }
 
     //
@@ -107,9 +92,7 @@ class RequestTest extends DbWebTestCase
     {
         $this->postWithContent(self::BASE_URL, $this->getExistsData());
 
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $data = $this->getJsonData();
+        $data = $this->getJsonData(Response::HTTP_BAD_REQUEST);
 
         self::assertEquals([
             'error' => [
@@ -125,13 +108,13 @@ class RequestTest extends DbWebTestCase
     {
         $this->postWithContent(self::BASE_URL, $this->getSuccessData());
 
-        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
-
-        $data = $this->getJsonData();
+        $data = $this->getJsonData(Response::HTTP_CREATED);
 
         self::assertEmpty($data);
         $this->assertIsInDatabase('user_users', [
-            'email' => 'test@test.ru', 'name_first' => 'test', 'name_last' => 'test'
+            'email'      => 'test@test.ru',
+            'name_first' => 'test',
+            'name_last'  => 'test',
         ]);
     }
 

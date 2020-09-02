@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\OAuth;
 
 use App\Tests\Functional\DbWebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class PasswordGrantTest extends DbWebTestCase
@@ -14,11 +15,9 @@ class PasswordGrantTest extends DbWebTestCase
     /**
      * Попытка GET-запроса
      */
-    public function testMethod(): void
+    public function testInvalidMethod(): void
     {
-        $this->client->request('GET', self::BASE_URL);
-
-        self::assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED);
+        $this->assertInvalidMethod(Request::METHOD_GET, self::BASE_URL);
     }
 
     /**
@@ -26,11 +25,9 @@ class PasswordGrantTest extends DbWebTestCase
      */
     public function testNotExistedEmail(): void
     {
-        $this->client->request('POST', self::BASE_URL, $this->getNotExistedEmailData());
+        $this->client->request(Request::METHOD_POST, self::BASE_URL, $this->getNotExistedEmailData());
 
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $data = $this->getJsonData();
+        $data = $this->getJsonData(Response::HTTP_BAD_REQUEST);
 
         self::assertEquals([
             'error' => [
@@ -44,11 +41,9 @@ class PasswordGrantTest extends DbWebTestCase
      */
     public function testInvalidPassword(): void
     {
-        $this->client->request('POST', self::BASE_URL, $this->getInvalidPasswordData());
+        $this->client->request(Request::METHOD_POST, self::BASE_URL, $this->getInvalidPasswordData());
 
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $data = $this->getJsonData();
+        $data = $this->getJsonData(Response::HTTP_BAD_REQUEST);
 
         self::assertArrayHasKey('error', $data);
         self::assertNotEmpty($data['error']);
@@ -60,7 +55,7 @@ class PasswordGrantTest extends DbWebTestCase
      */
     public function testSuccess(): void
     {
-        $this->client->request('POST', self::BASE_URL, $this->getSuccessData());
+        $this->client->request(Request::METHOD_POST, self::BASE_URL, $this->getSuccessData());
 
         self::assertResponseIsSuccessful();
 

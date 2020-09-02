@@ -6,20 +6,23 @@ namespace App\Tests\Functional\Lesson\Goal\Show;
 
 use App\Tests\Fixtures\GoalFixture;
 use App\Tests\Functional\DbWebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class OneTest extends DbWebTestCase
 {
-    private const BASE_URL = '/goals/show/one/' . GoalFixture::GOAL_1_ID;
+    private const BASE_URL = '/goals/show/one/';
+
+    private const BASE_URL_GOAL_1 = self::BASE_URL . GoalFixture::GOAL_1_ID;
+
+    private const BASE_METHOD = Request::METHOD_GET;
 
     /**
      * Попытка просмотра цели без аутентификации
      */
     public function testNotAuth(): void
     {
-        $this->client->request('GET', self::BASE_URL);
-
-        self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+        $this->assertNotAuth(self::BASE_METHOD, self::BASE_URL_GOAL_1);
     }
 
     /**
@@ -27,19 +30,7 @@ class OneTest extends DbWebTestCase
      */
     public function testNotAdmin(): void
     {
-        $this->authAsUser();
-
-        $this->client->request('GET', self::BASE_URL);
-
-        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
-
-        $data = $this->getJsonData();
-
-        self::assertEquals([
-            'error' => [
-                'message' => 'Вам запрещено выполнять данное действие',
-            ],
-        ], $data);
+        $this->assertNotAdmin(self::BASE_METHOD, self::BASE_URL_GOAL_1);
     }
 
     /**
@@ -47,17 +38,7 @@ class OneTest extends DbWebTestCase
      */
     public function testNotValidUuid(): void
     {
-        $this->client->request('GET', '/goals/show/one/123');
-
-        $data = $this->getJsonData();
-
-        self::assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
-
-        self::assertEquals([
-            'error' => [
-                'message' => 'Ошибка запроса к базе данных',
-            ],
-        ], $data);
+        $this->assertNotValidUuid(self::BASE_METHOD, self::BASE_URL . '123');
     }
 
     /**
@@ -65,9 +46,7 @@ class OneTest extends DbWebTestCase
      */
     public function testNotFound(): void
     {
-        $this->client->request('GET', '/goals/show/one/00000000-0000-0000-0000-000000000099');
-
-        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        $this->assertNotFound(self::BASE_METHOD, self::BASE_URL . '00000000-0000-0000-0000-000000000099');
     }
 
     /**
@@ -77,11 +56,9 @@ class OneTest extends DbWebTestCase
     {
         $this->authAsAdmin();
 
-        $this->client->request('GET', self::BASE_URL);
+        $this->client->request(self::BASE_METHOD, self::BASE_URL_GOAL_1);
 
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
-
-        $data = $this->getJsonData();
+        $data = $this->getJsonData(Response::HTTP_OK);
 
         self::assertEquals([
             'id'         => GoalFixture::GOAL_1_ID,

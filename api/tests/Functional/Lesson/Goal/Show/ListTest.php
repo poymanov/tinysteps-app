@@ -6,20 +6,23 @@ namespace App\Tests\Functional\Lesson\Goal\Show;
 
 use App\Tests\Fixtures\GoalFixture;
 use App\Tests\Functional\DbWebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ListTest extends DbWebTestCase
 {
+    private const BASE_URL = '/goals/show/';
+
+    private const BASE_METHOD = Request::METHOD_GET;
+
     /**
      * Получение списка всех целей обучения согласно порядку сортировки
      */
     public function testAll(): void
     {
-        $this->client->request('GET', '/goals/show/all');
+        $this->client->request(self::BASE_METHOD, self::BASE_URL . 'all');
 
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
-
-        $data = $this->getJsonData();
+        $data = $this->getJsonData(Response::HTTP_OK);
 
         self::assertEquals([
             [
@@ -70,11 +73,9 @@ class ListTest extends DbWebTestCase
      */
     public function testActive(): void
     {
-        $this->client->request('GET', '/goals/show/active');
+        $this->client->request(self::BASE_METHOD, self::BASE_URL . 'active');
 
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
-
-        $data = $this->getJsonData();
+        $data = $this->getJsonData(Response::HTTP_OK);
 
         self::assertEquals([
             [
@@ -117,11 +118,9 @@ class ListTest extends DbWebTestCase
      */
     public function testArchived(): void
     {
-        $this->client->request('GET', '/goals/show/archived');
+        $this->client->request(self::BASE_METHOD, self::BASE_URL . 'archived');
 
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
-
-        $data = $this->getJsonData();
+        $data = $this->getJsonData(Response::HTTP_OK);
 
         self::assertEquals([
             [

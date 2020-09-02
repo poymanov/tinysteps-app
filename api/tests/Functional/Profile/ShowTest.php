@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-
 namespace App\Tests\Functional\Profile;
-
 
 use App\DataFixtures\UserFixture;
 use App\Tests\Functional\DbWebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShowTest extends DbWebTestCase
@@ -19,9 +18,7 @@ class ShowTest extends DbWebTestCase
      */
     public function testNotAuth(): void
     {
-        $this->client->request('GET', self::BASE_URL);
-
-        self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+        $this->assertNotAuth(Request::METHOD_GET, self::BASE_URL);
     }
 
     /**
@@ -31,22 +28,22 @@ class ShowTest extends DbWebTestCase
     {
         $this->authAsUser();
 
-        $this->client->request('GET', self::BASE_URL);
+        $this->client->request(Request::METHOD_GET, self::BASE_URL);
 
         self::assertResponseIsSuccessful();
 
         $data = $this->getJsonData();
 
         self::assertEquals([
-            'id' => UserFixture::USER_1_ID,
-            'email' => 'user@app.test',
-            'name' => [
+            'id'     => UserFixture::USER_1_ID,
+            'email'  => 'user@app.test',
+            'name'   => [
                 'first' => 'First',
-                'last' => 'Last',
-                'full' => 'First Last',
+                'last'  => 'Last',
+                'full'  => 'First Last',
             ],
             'status' => 'active',
-            'role' => 'ROLE_USER'
+            'role'   => 'ROLE_USER',
         ], $data);
     }
 }

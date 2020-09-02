@@ -41,9 +41,11 @@ class UserFixture extends Fixture
 
         $manager->persist($notConfirmed);
 
+        $alreadyRequestedToken = new ResetToken('789', (new DateTimeImmutable())->add(new DateInterval('P1Y')));
+
         $alreadyRequested = $this->getConfirmedUser()
             ->viaEmail(new Email('already-requested@app.test'))
-            ->withResetToken($this->tokenizer->generate())
+            ->withResetToken($alreadyRequestedToken)
             ->build();
 
         $manager->persist($alreadyRequested);
@@ -56,7 +58,7 @@ class UserFixture extends Fixture
 
         $manager->persist($withExpiredToken);
 
-        $resetToken   = new ResetToken('123', (new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $resetToken   = new ResetToken('123', (new DateTimeImmutable())->add(new DateInterval('P1Y')));
         $requestedResetPassword = $this->getConfirmedUser()
             ->viaEmail(new Email('request-reset-token@email.test'))
             ->withResetToken($resetToken)
