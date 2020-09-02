@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Exception\ValidationException;
 use Doctrine\DBAL\Exception\DriverException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -45,6 +46,8 @@ class ExceptionFormatter implements EventSubscriberInterface
         } elseif ($exception instanceof DriverException) {
             $message = 'Ошибка запроса к базе данных';
             $event->setResponse($this->buildErrorResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR));
+        } elseif ($exception instanceof ValidationException) {
+            $event->setResponse($this->buildResponseFromJson($exception->getJson(), Response::HTTP_UNPROCESSABLE_ENTITY));
         } else {
             $event->setResponse($this->buildErrorResponse($exception->getMessage(), Response::HTTP_BAD_REQUEST));
         }
@@ -53,7 +56,7 @@ class ExceptionFormatter implements EventSubscriberInterface
     /**
      * Формирование json-ответа с ошибкой
      *
-     * @param string $message Описание ошибки
+     * @param string $message    Описание ошибки
      * @param int    $statusCode Код статуса ответа
      *
      * @return JsonResponse
@@ -65,5 +68,18 @@ class ExceptionFormatter implements EventSubscriberInterface
                 'message' => $message,
             ],
         ], $statusCode);
+    }
+
+    /**
+     * Формирование json-ответа из готового json
+     *
+     * @param string $jsonContent
+     * @param int    $statusCode
+     *
+     * @return JsonResponse
+     */
+    private function buildResponseFromJson(string $jsonContent, int $statusCode): JsonResponse
+    {
+        return new JsonResponse($jsonContent, $statusCode, [], true);
     }
 }

@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Controller\Auth;
 
-use App\Model\User\UseCase\SignUp;
-use App\Serializer\ValidationSerializer;
 use OpenApi\Annotations as OA;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Controller\BaseController;
+use App\Model\User\UseCase\SignUp;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @OA\Schema(
@@ -27,35 +26,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  *     @OA\Property(property="password_confirmation", type="string", example="123qwe", description="Подтверждение пароля", minLength=6),
  * )
  */
-class SignUpController extends AbstractController
+class SignUpController extends BaseController
 {
-    /**
-     * @var SerializerInterface
-     */
-    private SerializerInterface $serializer;
-
-    /**
-     * @var ValidatorInterface
-     */
-    private ValidatorInterface $validator;
-
-    /**
-     * @var ValidationSerializer
-     */
-    private ValidationSerializer $validationSerializer;
-
-    /**
-     * @param SerializerInterface  $serializer
-     * @param ValidatorInterface   $validator
-     * @param ValidationSerializer $validationSerializer
-     */
-    public function __construct(SerializerInterface $serializer, ValidatorInterface $validator, ValidationSerializer $validationSerializer)
-    {
-        $this->serializer           = $serializer;
-        $this->validator            = $validator;
-        $this->validationSerializer = $validationSerializer;
-    }
-
     /**
      * @OA\Post(
      *     path="/auth/signup",
@@ -87,22 +59,16 @@ class SignUpController extends AbstractController
      * @param SignUp\Request\Handler $handler
      *
      * @return Response
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     * @throws TransportExceptionInterface
      */
     public function request(Request $request, SignUp\Request\Handler $handler): Response
     {
         /** @var SignUp\Request\Command $command */
-        $command = $this->serializer->deserialize($request->getContent(), SignUp\Request\Command::class, 'json');
+        $command = $this->getSerializer()->deserialize($request->getContent(), SignUp\Request\Command::class, 'json');
 
-        $violations = $this->validator->validate($command);
-
-        if (count($violations)) {
-            $json = $this->validationSerializer->serialize($violations);
-
-            return new JsonResponse($json, Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
-        }
+        $this->validateCommand($command);
 
         $handler->handle($command);
 
@@ -129,12 +95,13 @@ class SignUpController extends AbstractController
      *
      * @Route("/auth/signup/{token}", name="auth.signup.confirm")
      *
-     * @param Request $request
-     * @param string  $token
+     * @param string                         $token
+     *
+     * @param SignUp\Confirm\ByToken\Handler $handler
      *
      * @return Response
      */
-    public function confirm(Request $request, string $token, SignUp\Confirm\ByToken\Handler $handler): Response
+    public function confirm(string $token, SignUp\Confirm\ByToken\Handler $handler): Response
     {
         $command = new SignUp\Confirm\ByToken\Command($token);
 

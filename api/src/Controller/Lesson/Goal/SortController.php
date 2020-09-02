@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Controller\Lesson\Goal;
 
+use OpenApi\Annotations as OA;
+use App\Controller\BaseController;
 use App\Model\Lesson\Entity\Goal\Goal;
 use App\Model\Lesson\UseCase\Goal\Sort;
-use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @IsGranted("ROLE_ADMIN")
  */
-class SortController extends AbstractController
+class SortController extends BaseController
 {
     /**
      * @OA\Patch (

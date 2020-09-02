@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Auth;
 
-use App\Model\User\UseCase\Reset;
-use App\Serializer\ValidationSerializer;
 use OpenApi\Annotations as OA;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Controller\BaseController;
+use App\Model\User\UseCase\Reset;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @OA\Schema(
@@ -29,35 +25,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  *     @OA\Property(property="password", type="string", example="123qwe", description="Пароль", minLength=6),
  * )
  */
-class ResetController extends AbstractController
+class ResetController extends BaseController
 {
-    /**
-     * @var SerializerInterface
-     */
-    private SerializerInterface $serializer;
-
-    /**
-     * @var ValidatorInterface
-     */
-    private ValidatorInterface $validator;
-
-    /**
-     * @var ValidationSerializer
-     */
-    private ValidationSerializer $validationSerializer;
-
-    /**
-     * @param SerializerInterface  $serializer
-     * @param ValidatorInterface   $validator
-     * @param ValidationSerializer $validationSerializer
-     */
-    public function __construct(SerializerInterface $serializer, ValidatorInterface $validator, ValidationSerializer $validationSerializer)
-    {
-        $this->serializer           = $serializer;
-        $this->validator            = $validator;
-        $this->validationSerializer = $validationSerializer;
-    }
-
     /**
      * @OA\Post(
      *     path="/auth/reset",
@@ -95,15 +64,9 @@ class ResetController extends AbstractController
     public function request(Request $request, Reset\Request\Handler $handler): Response
     {
         /** @var Reset\Request\Command $command */
-        $command = $this->serializer->deserialize($request->getContent(), Reset\Request\Command::class, 'json');
+        $command = $this->getSerializer()->deserialize($request->getContent(), Reset\Request\Command::class, 'json');
 
-        $violations = $this->validator->validate($command);
-
-        if (count($violations)) {
-            $json = $this->validationSerializer->serialize($violations);
-
-            return new JsonResponse($json, Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
-        }
+        $this->validateCommand($command);
 
         $handler->handle($command);
 
@@ -149,17 +112,11 @@ class ResetController extends AbstractController
     public function reset(Request $request, string $token, Reset\Reset\Handler $handler): Response
     {
         /** @var Reset\Reset\Command $command */
-        $command = $this->serializer->deserialize($request->getContent(), Reset\Reset\Command::class, 'json', [
-            'object_to_populate' => new Reset\Reset\Command($token)
+        $command = $this->getSerializer()->deserialize($request->getContent(), Reset\Reset\Command::class, 'json', [
+            'object_to_populate' => new Reset\Reset\Command($token),
         ]);
 
-        $violations = $this->validator->validate($command);
-
-        if (count($violations)) {
-            $json = $this->validationSerializer->serialize($violations);
-
-            return new JsonResponse($json, Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
-        }
+        $this->validateCommand($command);
 
         $handler->handle($command);
 

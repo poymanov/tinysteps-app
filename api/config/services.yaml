@@ -27,7 +27,7 @@ services:
     # as action arguments even if you don't extend any base controller class
     App\Controller\:
         resource: '../src/Controller/'
-        tags: ['controller.service_arguments']
+        tags: [ 'controller.service_arguments' ]
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -37,7 +37,7 @@ services:
 
     App\Model\User\Service\ResetTokenizer:
         factory: 'App\Container\Model\User\Service\ResetTokenizerFactory::create'
-        arguments: ['PT1H']
+        arguments: [ 'PT1H' ]
 
     App\Event\Listener\SetFromListener:
         $fromEmail: '%env(MAILER_FROM_EMAIL)%'

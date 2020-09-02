@@ -4,20 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controller\Lesson\Goal;
 
+use OpenApi\Annotations as OA;
+use App\Controller\BaseController;
 use App\Model\Lesson\Entity\Goal\Goal as GoalModel;
 use App\Model\Lesson\UseCase\Goal;
-use App\Serializer\ValidationSerializer;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
-use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @OA\Schema(
@@ -41,35 +37,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  *
  * @IsGranted("ROLE_ADMIN")
  */
-class UpdateController extends AbstractController
+class UpdateController extends BaseController
 {
-    /**
-     * @var SerializerInterface
-     */
-    private SerializerInterface $serializer;
-
-    /**
-     * @var ValidatorInterface
-     */
-    private ValidatorInterface $validator;
-
-    /**
-     * @var ValidationSerializer
-     */
-    private ValidationSerializer $validationSerializer;
-
-    /**
-     * @param SerializerInterface  $serializer
-     * @param ValidatorInterface   $validator
-     * @param ValidationSerializer $validationSerializer
-     */
-    public function __construct(SerializerInterface $serializer, ValidatorInterface $validator, ValidationSerializer $validationSerializer)
-    {
-        $this->serializer           = $serializer;
-        $this->validator            = $validator;
-        $this->validationSerializer = $validationSerializer;
-    }
-
     /**
      * @OA\Patch (
      *     path="/goals/update/name/{id}",
@@ -125,18 +94,12 @@ class UpdateController extends AbstractController
     public function name(Request $request, GoalModel $goal, Goal\Name\Handler $handler): Response
     {
         /** @var Goal\Name\Command $command */
-        $command = $this->serializer->deserialize($request->getContent(), Goal\Name\Command::class, 'json', [
+        $command = $this->getSerializer()->deserialize($request->getContent(), Goal\Name\Command::class, 'json', [
             'object_to_populate' => new Goal\Name\Command($goal->getId()->getValue()),
             'ignored_attributes' => ['id'],
         ]);
 
-        $violations = $this->validator->validate($command);
-
-        if (count($violations)) {
-            $json = $this->validationSerializer->serialize($violations);
-
-            return new JsonResponse($json, Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
-        }
+        $this->validateCommand($command);
 
         $handler->handle($command);
 
@@ -198,18 +161,12 @@ class UpdateController extends AbstractController
     public function alias(Request $request, GoalModel $goal, Goal\Alias\Handler $handler): Response
     {
         /** @var Goal\Alias\Command $command */
-        $command = $this->serializer->deserialize($request->getContent(), Goal\Alias\Command::class, 'json', [
+        $command = $this->getSerializer()->deserialize($request->getContent(), Goal\Alias\Command::class, 'json', [
             'object_to_populate' => new Goal\Alias\Command($goal->getId()->getValue()),
             'ignored_attributes' => ['id'],
         ]);
 
-        $violations = $this->validator->validate($command);
-
-        if (count($violations)) {
-            $json = $this->validationSerializer->serialize($violations);
-
-            return new JsonResponse($json, Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
-        }
+        $this->validateCommand($command);
 
         $handler->handle($command);
 
@@ -271,18 +228,12 @@ class UpdateController extends AbstractController
     public function status(Request $request, GoalModel $goal, Goal\Status\Handler $handler): Response
     {
         /** @var Goal\Status\Command $command */
-        $command = $this->serializer->deserialize($request->getContent(), Goal\Status\Command::class, 'json', [
+        $command = $this->getSerializer()->deserialize($request->getContent(), Goal\Status\Command::class, 'json', [
             'object_to_populate' => new Goal\Status\Command($goal->getId()->getValue()),
             'ignored_attributes' => ['id'],
         ]);
 
-        $violations = $this->validator->validate($command);
-
-        if (count($violations)) {
-            $json = $this->validationSerializer->serialize($violations);
-
-            return new JsonResponse($json, Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
-        }
+        $this->validateCommand($command);
 
         $handler->handle($command);
 

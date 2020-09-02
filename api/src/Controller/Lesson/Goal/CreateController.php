@@ -4,17 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller\Lesson\Goal;
 
-use App\Model\Lesson\UseCase\Goal;
-use App\Serializer\ValidationSerializer;
 use OpenApi\Annotations as OA;
+use App\Controller\BaseController;
+use App\Model\Lesson\UseCase\Goal;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @OA\Schema(
@@ -24,35 +20,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  *     @OA\Property(property="name", type="string", example="Прочие потребности", description="Название цели обучения", maxLength=255),
  * ),
  */
-class CreateController extends AbstractController
+class CreateController extends BaseController
 {
-    /**
-     * @var SerializerInterface
-     */
-    private SerializerInterface $serializer;
-
-    /**
-     * @var ValidatorInterface
-     */
-    private ValidatorInterface $validator;
-
-    /**
-     * @var ValidationSerializer
-     */
-    private ValidationSerializer $validationSerializer;
-
-    /**
-     * @param SerializerInterface  $serializer
-     * @param ValidatorInterface   $validator
-     * @param ValidationSerializer $validationSerializer
-     */
-    public function __construct(SerializerInterface $serializer, ValidatorInterface $validator, ValidationSerializer $validationSerializer)
-    {
-        $this->serializer           = $serializer;
-        $this->validator            = $validator;
-        $this->validationSerializer = $validationSerializer;
-    }
-
     /**
      * @OA\Post(
      *     path="/goals/create",
@@ -104,15 +73,9 @@ class CreateController extends AbstractController
     public function create(Request $request, Goal\Create\Handler $handler): Response
     {
         /** @var Goal\Create\Command $command */
-        $command = $this->serializer->deserialize($request->getContent(), Goal\Create\Command::class, 'json');
+        $command = $this->getSerializer()->deserialize($request->getContent(), Goal\Create\Command::class, 'json');
 
-        $violations = $this->validator->validate($command);
-
-        if (count($violations)) {
-            $json = $this->validationSerializer->serialize($violations);
-
-            return new JsonResponse($json, Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
-        }
+        $this->validateCommand($command);
 
         $handler->handle($command);
 

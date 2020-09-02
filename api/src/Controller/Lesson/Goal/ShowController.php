@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Lesson\Goal;
 
+use OpenApi\Annotations as OA;
+use App\Controller\BaseController;
 use App\Model\Lesson\Entity\Goal\Goal;
 use App\Model\Lesson\Service\GoalResponseFormatter;
 use App\ReadModel\Lesson\GoalFetcher;
-use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -32,7 +32,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *     @OA\Items(ref="#/components/schemas/GoalShowResponse")
  * )
  */
-class ShowController extends AbstractController
+class ShowController extends BaseController
 {
     /**
      * @var GoalResponseFormatter
