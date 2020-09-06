@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Fixtures;
 
 use App\Model\User\Entity\User\Email;
+use App\Model\User\Entity\User\Id;
 use App\Model\User\Entity\User\Name;
 use App\Model\User\Entity\User\ResetToken;
 use App\Model\User\Service\ResetTokenizer;
@@ -16,6 +17,10 @@ use Doctrine\Persistence\ObjectManager;
 
 class UserFixture extends Fixture
 {
+    public const NOT_CONFIRMED_UUID = '00000000-0000-0000-0000-000000000100';
+
+    public const EXISTING_UUID = '00000000-0000-0000-0000-000000000101';
+
     private ResetTokenizer $tokenizer;
 
     /**
@@ -29,6 +34,7 @@ class UserFixture extends Fixture
     public function load(ObjectManager $manager)
     {
         $existing = $this->getConfirmedUser()
+            ->withId(new Id(self::EXISTING_UUID))
             ->viaEmail(new Email('existing-user@app.test'))
             ->withName(new Name('existing', 'user'))
             ->build();
@@ -36,6 +42,7 @@ class UserFixture extends Fixture
         $manager->persist($existing);
 
         $notConfirmed = (new UserBuilder())
+            ->withId(new Id(self::NOT_CONFIRMED_UUID))
             ->viaEmail(new Email('not-confirmed-confirm@app.test'), null, 'not-confirmed-token')
             ->build();
 
@@ -50,7 +57,7 @@ class UserFixture extends Fixture
 
         $manager->persist($alreadyRequested);
 
-        $expiredToken = new ResetToken('456', new DateTimeImmutable());
+        $expiredToken     = new ResetToken('456', new DateTimeImmutable());
         $withExpiredToken = $this->getConfirmedUser()
             ->viaEmail(new Email('expired-token@email.test'))
             ->withResetToken($expiredToken)
@@ -58,7 +65,7 @@ class UserFixture extends Fixture
 
         $manager->persist($withExpiredToken);
 
-        $resetToken   = new ResetToken('123', (new DateTimeImmutable())->add(new DateInterval('P1Y')));
+        $resetToken             = new ResetToken('123', (new DateTimeImmutable())->add(new DateInterval('P1Y')));
         $requestedResetPassword = $this->getConfirmedUser()
             ->viaEmail(new Email('request-reset-token@email.test'))
             ->withResetToken($resetToken)

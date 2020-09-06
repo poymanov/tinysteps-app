@@ -4,28 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controller\Auth;
 
-use OpenApi\Annotations as OA;
 use App\Controller\BaseController;
 use App\Model\User\UseCase\SignUp;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @OA\Schema(
- *     schema="AuthSignUpRequest",
- *     title="Регистрация пользователя",
- *     required={"first_name", "last_name", "email", "password", "password_confirmation"},
- *     @OA\Property(property="first_name", type="string", example="test", description="Имя пользователя", maxLength=255),
- *     @OA\Property(property="last_name", type="string", example="test", description="Фамилия пользователя", maxLength=255),
- *     @OA\Property(property="email", type="string", example="test@test.ru", description="Email пользователя", maxLength=255),
- *     @OA\Property(property="password", type="string", example="123qwe", description="Пароль", minLength=6),
- *     @OA\Property(property="password_confirmation", type="string", example="123qwe", description="Подтверждение пароля", minLength=6),
- * )
- */
 class SignUpController extends BaseController
 {
     /**
@@ -35,7 +23,14 @@ class SignUpController extends BaseController
      *     description="Регистрация пользователя",
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/AuthSignUpRequest")
+     *         @OA\JsonContent(
+     *              required={"first_name", "last_name", "email", "password", "password_confirmation"},
+     *              @OA\Property(property="first_name", type="string", example="test", description="Имя пользователя", maxLength=255),
+     *              @OA\Property(property="last_name", type="string", example="test", description="Фамилия пользователя", maxLength=255),
+     *              @OA\Property(property="email", type="string", example="test@test.ru", description="Email пользователя", maxLength=255),
+     *              @OA\Property(property="password", type="string", example="123qwe", description="Пароль", minLength=6),
+     *              @OA\Property(property="password_confirmation", type="string", example="123qwe", description="Подтверждение пароля", minLength=6),
+     *         )
      *     ),
      *     @OA\Response(
      *         response="201",

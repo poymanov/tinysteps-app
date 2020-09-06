@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use OpenApi\Annotations as OA;
 use App\Exception\ValidationException;
 use App\Serializer\ValidationSerializer;
+use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -41,6 +41,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * @OA\Tag(
  *     name="goals",
  *     description="Цели обучения",
+ * ),
+ * @OA\Tag(
+ *     name="teachers",
+ *     description="Преподаватели",
  * ),
  * @OA\Schema(
  *     schema="SuccessResponse",

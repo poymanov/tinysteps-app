@@ -4,22 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller\Lesson\Goal;
 
-use OpenApi\Annotations as OA;
 use App\Controller\BaseController;
 use App\Model\Lesson\UseCase\Goal;
+use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @OA\Schema(
- *     schema="GoalCreateRequest",
- *     title="Создание цели обучения",
- *     required={"name"},
- *     @OA\Property(property="name", type="string", example="Прочие потребности", description="Название цели обучения", maxLength=255),
- * ),
- */
 class CreateController extends BaseController
 {
     /**
@@ -32,7 +24,10 @@ class CreateController extends BaseController
      *     },
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/GoalCreateRequest")
+     *         @OA\JsonContent(
+     *              required={"name"},
+     *              @OA\Property(property="name", type="string", example="Прочие потребности", description="Название цели обучения", maxLength=255),
+     *         )
      *     ),
      *     @OA\Response(
      *         response="201",

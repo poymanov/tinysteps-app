@@ -14,6 +14,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
+use UnexpectedValueException;
 
 class ExceptionFormatter implements EventSubscriberInterface
 {
@@ -46,6 +47,9 @@ class ExceptionFormatter implements EventSubscriberInterface
         } elseif ($exception instanceof DriverException) {
             $message = 'Ошибка запроса к базе данных';
             $event->setResponse($this->buildErrorResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR));
+        } elseif ($exception instanceof UnexpectedValueException) {
+            $message = 'Неверный тип одного/нескольких указанных полей';
+            $event->setResponse($this->buildErrorResponse($message, Response::HTTP_BAD_REQUEST));
         } elseif ($exception instanceof ValidationException) {
             $event->setResponse($this->buildResponseFromJson($exception->getJson(), Response::HTTP_UNPROCESSABLE_ENTITY));
         } else {

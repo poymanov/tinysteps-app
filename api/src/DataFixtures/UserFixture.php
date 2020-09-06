@@ -16,6 +16,8 @@ class UserFixture extends Fixture
 {
     public const USER_1_ID = '00000000-0000-0000-0000-000000000001';
 
+    public const USER_2_ID = '00000000-0000-0000-0000-000000000002';
+
     private PasswordHasher $hasher;
 
     /**
@@ -42,6 +44,7 @@ class UserFixture extends Fixture
         $adminCredentials = self::adminCredentials();
 
         $admin = (new UserBuilder())
+            ->withId(new Id(self::USER_2_ID))
             ->viaEmail(new Email($adminCredentials['email']), $this->hasher->hash($adminCredentials['password']))
             ->confirmed()
             ->withRole(Role::admin())
@@ -58,8 +61,8 @@ class UserFixture extends Fixture
     public static function userCredentials(): array
     {
         return [
-            'email' => 'user@app.test',
-            'password'   => '123qwe',
+            'email'    => 'user@app.test',
+            'password' => '123qwe',
         ];
     }
 
@@ -69,8 +72,8 @@ class UserFixture extends Fixture
     public static function adminCredentials(): array
     {
         return [
-            'email' => 'admin@app.test',
-            'password'   => '123qwe',
+            'email'    => 'admin@app.test',
+            'password' => '123qwe',
         ];
     }
 }

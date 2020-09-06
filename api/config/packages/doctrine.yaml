@@ -15,6 +15,12 @@ doctrine:
             lesson_goal_id: 'App\Model\Lesson\Entity\Goal\IdType'
             lesson_goal_alias: 'App\Model\Lesson\Entity\Goal\AliasType'
             lesson_goal_status: 'App\Model\Lesson\Entity\Goal\StatusType'
+            lesson_teacher_id: 'App\Model\Lesson\Entity\Teacher\IdType'
+            lesson_teacher_alias: 'App\Model\Lesson\Entity\Teacher\AliasType'
+            lesson_teacher_status: 'App\Model\Lesson\Entity\Teacher\StatusType'
+            lesson_teacher_price: 'App\Model\Lesson\Entity\Teacher\PriceType'
+            lesson_teacher_rating: 'App\Model\Lesson\Entity\Teacher\RatingType'
+            lesson_teacher_description: 'App\Model\Lesson\Entity\Teacher\DescriptionType'
     orm:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
@@ -32,3 +38,9 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Model/Lesson/Entity/Goal'
                 prefix: 'App\Model\Lesson\Entity\Goal'
                 alias: Goal
+            Teacher:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Lesson/Entity/Teacher'
+                prefix: 'App\Model\Lesson\Entity\Teacher'
+                alias: Teacher
