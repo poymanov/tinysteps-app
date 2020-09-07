@@ -6,6 +6,7 @@ namespace App\Model\Lesson\Entity\Teacher;
 
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use DomainException;
 
 /**
  * @ORM\Entity
@@ -147,5 +148,19 @@ class Teacher
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    /**
+     * Изменение статуса
+     *
+     * @param Status $status
+     */
+    public function changeStatus(Status $status): void
+    {
+        if ($this->getStatus()->isEqual($status)) {
+            throw new DomainException('Преподаватель уже находится в данном статусе.');
+        }
+
+        $this->status = $status;
     }
 }

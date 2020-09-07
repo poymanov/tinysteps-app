@@ -22,7 +22,7 @@ class TeacherBuilder
     /**
      * @var string
      */
-    private string $userId;
+    private string $userId = '';
 
     /**
      * @var Alias
@@ -141,6 +141,4 @@ class TeacherBuilder
     {
         return new Teacher($this->id, $this->userId, $this->alias, $this->description, $this->price, $this->createdAt);
     }
-
-
 }
