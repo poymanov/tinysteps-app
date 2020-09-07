@@ -21,7 +21,7 @@ class Description
     public function __construct(string $value)
     {
         Assert::notEmpty($value);
-        Assert::minLength(self::MIN_LENGTH, 'Минимальная длина описания (символов) - ' . self::MIN_LENGTH);
+        Assert::minLength($value, self::MIN_LENGTH, 'Минимальная длина описания (символов) - ' . self::MIN_LENGTH);
 
         $this->value = $value;
     }

@@ -7,6 +7,8 @@ namespace App\Controller\Lesson\Teacher;
 use App\Controller\BaseController;
 use App\Model\Lesson\Entity\Teacher\Teacher as TeacherModel;
 use App\Model\Lesson\UseCase\Teacher;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
@@ -70,8 +72,8 @@ class UpdateController extends BaseController
      * @param Teacher\Status\Handler $handler
      *
      * @return Response
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NoResultException
+     * @throws NonUniqueResultException
      */
     public function status(Request $request, TeacherModel $teacher, Teacher\Status\Handler $handler): Response
     {
@@ -98,7 +100,7 @@ class UpdateController extends BaseController
      *         required=true,
      *         @OA\JsonContent(
      *              required={"alias"},
-     *              @OA\Property(property="alias", type="string", example="test", description="Alias цели обучения", maxLength=255),
+     *              @OA\Property(property="alias", type="string", example="test", description="Alias преподавателя", maxLength=255),
      *          )
      *     ),
      *     security={
@@ -140,14 +142,84 @@ class UpdateController extends BaseController
      * @param Teacher\Alias\Handler $handler
      *
      * @return Response
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NoResultException
+     * @throws NonUniqueResultException
      */
     public function alias(Request $request, TeacherModel $teacher, Teacher\Alias\Handler $handler): Response
     {
         /** @var Teacher\Alias\Command $command */
         $command = $this->getSerializer()->deserialize($request->getContent(), Teacher\Alias\Command::class, 'json', [
             'object_to_populate' => new Teacher\Alias\Command($teacher->getId()->getValue()),
+            'ignored_attributes' => ['id'],
+        ]);
+
+        $this->validateCommand($command);
+
+        $handler->handle($command);
+
+        return $this->json([], Response::HTTP_OK);
+    }
+
+    /**
+     * @OA\Patch (
+     *     path="/teachers/update/description/{id}",
+     *     tags={"teachers"},
+     *     description="Изменение описания преподавателя",
+     *     @OA\Parameter(name="id", in="path", required=true, description="Идентификатор преподавателя", @OA\Schema(type="string")),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *              required={"description"},
+     *              @OA\Property(property="description", type="string", example="Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient.", description="Описание преподавателя", minLength=150),
+     *          )
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     },
+     *     @OA\Response(
+     *         response="200",
+     *         description="Успешный ответ",
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Попытка изменения описания для преподавателя, находящегося в архивном состоянии",
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Неавторизованный запрос на изменение",
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Доступ только для администраторов",
+     *         @OA\JsonContent(ref="#/components/schemas/NotGrantedErrorModel")
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Ошибки валидации",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorModelValidationFailed")
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="ID указан в неправильном формате",
+     *     )
+     * )
+     *
+     * @Route("/teachers/update/description/{id}", name="teachers.update.description", methods={"PATCH"})
+     *
+     * @param Request                     $request
+     * @param TeacherModel                $teacher
+     *
+     * @param Teacher\Description\Handler $handler
+     *
+     * @return Response
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    public function description(Request $request, TeacherModel $teacher, Teacher\Description\Handler $handler): Response
+    {
+        /** @var Teacher\Description\Command $command */
+        $command = $this->getSerializer()->deserialize($request->getContent(), Teacher\Description\Command::class, 'json', [
+            'object_to_populate' => new Teacher\Description\Command($teacher->getId()->getValue()),
             'ignored_attributes' => ['id'],
         ]);
 

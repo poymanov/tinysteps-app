@@ -177,4 +177,18 @@ class Teacher
 
         $this->alias = $alias;
     }
+
+    /**
+     * Изменение описания
+     *
+     * @param Description $description
+     */
+    public function changeDescription(Description $description): void
+    {
+        if ($this->getStatus()->isArchived()) {
+            throw new DomainException('Преподаватель находится в архиве и недоступен для изменений.');
+        }
+
+        $this->description = $description;
+    }
 }
