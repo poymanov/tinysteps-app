@@ -32,7 +32,7 @@ class CreateTest extends TestCase
     }
 
     /**
-     * Создание с нулевой ценой
+     * Создание с отрицательной ценой
      */
     public function testPriceLessThanZero()
     {

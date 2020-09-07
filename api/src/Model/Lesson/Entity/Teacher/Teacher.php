@@ -191,4 +191,18 @@ class Teacher
 
         $this->description = $description;
     }
+
+    /**
+     * Изменение цены
+     *
+     * @param Price $price
+     */
+    public function changePrice(Price $price): void
+    {
+        if ($this->getStatus()->isArchived()) {
+            throw new DomainException('Преподаватель находится в архиве и недоступен для изменений.');
+        }
+
+        $this->price = $price;
+    }
 }
