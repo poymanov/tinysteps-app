@@ -163,4 +163,18 @@ class Teacher
 
         $this->status = $status;
     }
+
+    /**
+     * Изменение alias
+     *
+     * @param Alias $alias
+     */
+    public function changeAlias(Alias $alias): void
+    {
+        if ($this->getStatus()->isArchived()) {
+            throw new DomainException('Преподаватель находится в архиве и недоступен для изменений.');
+        }
+
+        $this->alias = $alias;
+    }
 }

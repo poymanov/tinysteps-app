@@ -21,6 +21,8 @@ class UserFixture extends Fixture
 
     public const EXISTING_UUID = '00000000-0000-0000-0000-000000000101';
 
+    public const ALREADY_REQUESTED_UUID = '00000000-0000-0000-0000-000000000102';
+
     private ResetTokenizer $tokenizer;
 
     /**
@@ -51,6 +53,7 @@ class UserFixture extends Fixture
         $alreadyRequestedToken = new ResetToken('789', (new DateTimeImmutable())->add(new DateInterval('P1Y')));
 
         $alreadyRequested = $this->getConfirmedUser()
+            ->withId(new Id(self::ALREADY_REQUESTED_UUID))
             ->viaEmail(new Email('already-requested@app.test'))
             ->withResetToken($alreadyRequestedToken)
             ->build();

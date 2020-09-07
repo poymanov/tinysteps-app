@@ -8,6 +8,7 @@ use App\Model\Lesson\Entity\Teacher\Alias;
 use App\Model\Lesson\Entity\Teacher\Description;
 use App\Model\Lesson\Entity\Teacher\Id;
 use App\Model\Lesson\Entity\Teacher\Price;
+use App\Model\Lesson\Entity\Teacher\Status;
 use App\Model\Lesson\Entity\Teacher\Teacher;
 use DateTimeImmutable;
 use Exception;
@@ -38,6 +39,11 @@ class TeacherBuilder
      * @var Price
      */
     private Price $price;
+
+    /**
+     * @var Status|null
+     */
+    private ?Status $status = null;
 
     /**
      * @var DateTimeImmutable
@@ -121,6 +127,19 @@ class TeacherBuilder
     }
 
     /**
+     * @param Status $status
+     *
+     * @return $this
+     */
+    public function withStatus(Status $status): self
+    {
+        $clone         = clone $this;
+        $clone->status = $status;
+
+        return $clone;
+    }
+
+    /**
      * @param DateTimeImmutable $date
      *
      * @return $this
@@ -139,6 +158,12 @@ class TeacherBuilder
      */
     public function build(): Teacher
     {
-        return new Teacher($this->id, $this->userId, $this->alias, $this->description, $this->price, $this->createdAt);
+        $teacher = new Teacher($this->id, $this->userId, $this->alias, $this->description, $this->price, $this->createdAt);;
+
+        if ($this->status) {
+            $teacher->changeStatus($this->status);
+        }
+
+        return $teacher;
     }
 }

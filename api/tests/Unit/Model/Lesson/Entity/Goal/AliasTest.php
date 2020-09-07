@@ -26,6 +26,5 @@ class AliasTest extends TestCase
         $goal->changeAlias($alias);
 
         self::assertEquals($alias, $goal->getAlias());
-
     }
 }
