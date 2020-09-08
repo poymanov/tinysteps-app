@@ -11,6 +11,11 @@ use Webmozart\Assert\Assert;
 class Rating
 {
     /**
+     * Максимальное значение рейтинга
+     */
+    private const MAX = 5;
+
+    /**
      * @var float
      */
     private $value;
@@ -20,7 +25,8 @@ class Rating
      */
     public function __construct(float $value)
     {
-        Assert::greaterThanEq($value, 0);
+        Assert::greaterThanEq($value, 0, 'Значение рейтинга не может быть отрицательным.');
+        Assert::lessThanEq($value, 5, 'Значение рейтинга не может быть больше ' . self::MAX . '.');
 
         $this->value = $value;
     }

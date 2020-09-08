@@ -9,9 +9,9 @@ use App\Tests\Functional\DbWebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class PriceTest extends DbWebTestCase
+class RatingTest extends DbWebTestCase
 {
-    private const BASE_URL = '/teachers/update/price/';
+    private const BASE_URL = '/teachers/update/rating/';
 
     private const BASE_URL_TEACHER_1 = self::BASE_URL . TeacherFixture::TEACHER_1_ID;
 
@@ -44,7 +44,7 @@ class PriceTest extends DbWebTestCase
     }
 
     /**
-     * Изменение стоимости услуг для преподавателя c uuid в неправильном формате
+     * Изменение рейтинга преподавателя c uuid в неправильном формате
      */
     public function testNotValidUuid(): void
     {
@@ -52,7 +52,7 @@ class PriceTest extends DbWebTestCase
     }
 
     /**
-     * Попытка изменения описания несуществующего преподавателя
+     * Попытка изменения рейтинга несуществующего преподавателя
      */
     public function testNotFound(): void
     {
@@ -60,7 +60,7 @@ class PriceTest extends DbWebTestCase
     }
 
     /**
-     * Значение новой стоимости услуг не указано
+     * Значение нового рейтинга не указано
      */
     public function testEmpty(): void
     {
@@ -68,55 +68,67 @@ class PriceTest extends DbWebTestCase
             self::BASE_METHOD,
             self::BASE_URL_TEACHER_1,
             [],
-            ['price' => ['Значение не должно быть пустым.']]
+            ['rating' => ['Значение не должно быть пустым.']]
         );
     }
 
     /**
-     * Стоимость услуг указана в неправильном формате
+     * Рейтинг указан в неправильном формате
      */
-    public function testNotValidPrice(): void
+    public function testNotValidRating(): void
     {
         $this->assertBadRequest(
             self::BASE_METHOD,
             self::BASE_URL_TEACHER_1,
-            $this->getNotValidPriceData(),
+            $this->getNotValidRatingData(),
             'Неверный тип одного/нескольких указанных полей'
         );
     }
 
     /**
-     * Стоимость услуг равна 0
+     * Данные с ценой в неправильном формате
+     *
+     * @return array
      */
-    public function testZeroPrice(): void
+    private function getNotValidRatingData(): array
+    {
+        return [
+            'rating' => 'test',
+        ];
+    }
+
+    /**
+     * Рейтинг меньше 0
+     */
+    public function testLessThanZero(): void
     {
         $this->assertValidationFailed(
             self::BASE_METHOD,
             self::BASE_URL_TEACHER_1,
-            $this->getZeroPriceData(),
+            $this->getLessThanZeroData(),
             [
-                'price' => ['Значение должно быть положительным.'],
+                'rating' => ['Значение должно быть положительным или равным нулю.'],
             ]
         );
     }
 
     /**
-     * Стоимость услуг меньше 0
+     * Рейтинг больше максимально допустимого значения
      */
-    public function testLessThanZeroPrice(): void
+    public function testGreaterThanMax(): void
     {
         $this->assertValidationFailed(
             self::BASE_METHOD,
             self::BASE_URL_TEACHER_1,
-            $this->getLessThanZeroPriceData(),
+            $this->getGreaterThanMaxData(),
             [
-                'price' => ['Значение должно быть положительным.'],
+                'rating' => ['Значение должно быть меньше или равно "5".'],
             ]
         );
     }
 
     /**
-     * Попытка изменения стоимости услуг для преподавателя, находящегося в архивном состоянии
+     * Попытка изменения рейтинга преподавателя, находящегося в архивном состоянии
      */
     public function testTeacherArchived(): void
     {
@@ -129,7 +141,7 @@ class PriceTest extends DbWebTestCase
     }
 
     /**
-     * Успешное изменение стоимости услуг
+     * Успешное изменение рейтинга
      */
     public function testSuccess(): void
     {
@@ -143,43 +155,62 @@ class PriceTest extends DbWebTestCase
 
         $this->assertIsInDatabase('lesson_teachers', [
             'id'    => TeacherFixture::TEACHER_1_ID,
-            'price' => 100,
+            'rating' => 4,
         ]);
     }
 
     /**
-     * Данные с ценой в неправильном формате
+     * Рейтинг 0
+     */
+    public function testZero(): void
+    {
+        $this->authAsAdmin();
+
+        $this->patchWithContent(self::BASE_URL_TEACHER_1, $this->getZeroData());
+
+        $data = $this->getJsonData(Response::HTTP_OK);
+
+        self::assertEmpty($data);
+
+        $this->assertIsInDatabase('lesson_teachers', [
+            'id'    => TeacherFixture::TEACHER_1_ID,
+            'rating' => 0,
+        ]);
+    }
+
+    /**
+     * Данные с рейтингом меньше нуля
      *
      * @return array
      */
-    private function getNotValidPriceData(): array
+    private function getLessThanZeroData(): array
     {
         return [
-            'price' => 'test',
+            'rating' => -1,
         ];
     }
 
     /**
-     * Данные с нулевой ценой
+     * Данные с нулевым рейтингом
      *
      * @return array
      */
-    private function getZeroPriceData(): array
+    private function getZeroData(): array
     {
         return [
-            'price' => 0,
+            'rating' => 0,
         ];
     }
 
     /**
-     * Данные с ценой меньше нуля
+     * Данные с рейтингом больше допустимого значения
      *
      * @return array
      */
-    private function getLessThanZeroPriceData(): array
+    private function getGreaterThanMaxData(): array
     {
         return [
-            'price' => -1,
+            'rating' => 100,
         ];
     }
 
@@ -191,7 +222,7 @@ class PriceTest extends DbWebTestCase
     private function getSuccessData(): array
     {
         return [
-            'price' => 100,
+            'rating' => 4,
         ];
     }
 }

@@ -252,7 +252,7 @@ class UpdateController extends BaseController
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Попытка изменения описания для преподавателя, находящегося в архивном состоянии",
+     *         description="Попытка изменения цены для преподавателя, находящегося в архивном состоянии",
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -289,6 +289,75 @@ class UpdateController extends BaseController
         /** @var Teacher\Price\Command $command */
         $command = $this->getSerializer()->deserialize($request->getContent(), Teacher\Price\Command::class, 'json', [
             'object_to_populate' => new Teacher\Price\Command($teacher->getId()->getValue()),
+            'ignored_attributes' => ['id'],
+        ]);
+
+        $this->validateCommand($command);
+
+        $handler->handle($command);
+
+        return $this->json([], Response::HTTP_OK);
+    }
+
+    /**
+     * @OA\Patch (
+     *     path="/teachers/update/rating/{id}",
+     *     tags={"teachers"},
+     *     description="Изменение рейтинга преподавателя",
+     *     @OA\Parameter(name="id", in="path", required=true, description="Идентификатор преподавателя", @OA\Schema(type="string")),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *              required={"rating"},
+     *              @OA\Property(property="rating", type="float", example=4),
+     *          )
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     },
+     *     @OA\Response(
+     *         response="200",
+     *         description="Успешный ответ",
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Попытка изменения рейтинга для преподавателя, находящегося в архивном состоянии",
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Неавторизованный запрос на изменение",
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Доступ только для администраторов",
+     *         @OA\JsonContent(ref="#/components/schemas/NotGrantedErrorModel")
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Ошибки валидации",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorModelValidationFailed")
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="ID указан в неправильном формате",
+     *     )
+     * )
+     *
+     * @Route("/teachers/update/rating/{id}", name="teachers.update.rating", methods={"PATCH"})
+     *
+     * @param Request                $request
+     * @param TeacherModel           $teacher
+     * @param Teacher\Rating\Handler $handler
+     *
+     * @return Response
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    public function rating(Request $request, TeacherModel $teacher, Teacher\Rating\Handler $handler): Response
+    {
+        /** @var Teacher\Rating\Command $command */
+        $command = $this->getSerializer()->deserialize($request->getContent(), Teacher\Rating\Command::class, 'json', [
+            'object_to_populate' => new Teacher\Rating\Command($teacher->getId()->getValue()),
             'ignored_attributes' => ['id'],
         ]);
 

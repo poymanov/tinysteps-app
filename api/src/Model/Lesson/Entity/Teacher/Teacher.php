@@ -205,4 +205,18 @@ class Teacher
 
         $this->price = $price;
     }
+
+    /**
+     * Изменение рейтинга
+     *
+     * @param Rating $rating
+     */
+    public function changeRating(Rating $rating): void
+    {
+        if ($this->getStatus()->isArchived()) {
+            throw new DomainException('Преподаватель находится в архиве и недоступен для изменений.');
+        }
+
+        $this->rating = $rating;
+    }
 }
