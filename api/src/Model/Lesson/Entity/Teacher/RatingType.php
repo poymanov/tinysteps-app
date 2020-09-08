@@ -30,7 +30,7 @@ class RatingType extends FloatType
      */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
-        return !empty($value) ? new Rating($value) : null;
+        return !empty($value) ? new Rating(floatval($value)) : Rating::default();
     }
 
     /**

@@ -53,4 +53,13 @@ class Rating
     {
         return $this->getValue() === $other->getValue();
     }
+
+    /**
+     * @internal for postLoad callback
+     * @return bool
+     */
+    public function isEmpty(): bool
+    {
+        return empty($this->value);
+    }
 }

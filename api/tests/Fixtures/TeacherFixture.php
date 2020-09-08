@@ -8,6 +8,7 @@ use App\Model\Lesson\Entity\Teacher\Alias;
 use App\Model\Lesson\Entity\Teacher\Id;
 use App\Model\Lesson\Entity\Teacher\Status;
 use App\Tests\Builder\Lesson\TeacherBuilder;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
@@ -28,7 +29,9 @@ class TeacherFixture extends Fixture
         $teacher = (new TeacherBuilder())
             ->withId(new Id(self::TEACHER_1_ID))
             ->withUserId(UserFixture::EXISTING_UUID)
-            ->withAlias(new Alias('existing-user'))->build();
+            ->withAlias(new Alias('existing-user'))
+            ->withCreatedAt(new DateTimeImmutable('2020-01-01 15:00:00'))
+            ->build();
 
         $manager->persist($teacher);
 
