@@ -10,8 +10,6 @@ use App\Tests\Functional\DbWebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-//api/bin/.phpunit/phpunit-7.5-0/bin
-
 class OneTest extends DbWebTestCase
 {
     private const BASE_URL = '/teachers/show/one/';

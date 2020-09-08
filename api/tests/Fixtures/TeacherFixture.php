@@ -40,6 +40,7 @@ class TeacherFixture extends Fixture
             ->withUserId(UserFixture::ALREADY_REQUESTED_UUID)
             ->withAlias(new Alias('already-request-user'))
             ->withStatus(Status::archived())
+            ->withCreatedAt(new DateTimeImmutable('2020-01-01 16:00:00'))
             ->build();
 
         $manager->persist($teacher);

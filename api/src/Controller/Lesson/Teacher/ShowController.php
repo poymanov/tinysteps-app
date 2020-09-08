@@ -26,6 +26,12 @@ use Symfony\Component\Routing\Annotation\Route;
  *     @OA\Property(property="status", type="string", description="Статус активности", example="active"),
  *     @OA\Property(property="created_at", type="string", description="Дата создания", example="2020-01-02 10:00:00"),
  * ),
+ * @OA\Schema(
+ *     schema="TeacherListResponse",
+ *     title="Список преподавателей",
+ *     type="array",
+ *     @OA\Items(ref="#/components/schemas/TeacherShowResponse")
+ * )
  */
 class ShowController extends BaseController
 {
@@ -37,16 +43,16 @@ class ShowController extends BaseController
     /**
      * @var TeacherFetcher
      */
-    private TeacherFetcher $goals;
+    private TeacherFetcher $teachers;
 
     /**
      * @param TeacherResponseFormatter $responseFormatter
-     * @param TeacherFetcher           $goals
+     * @param TeacherFetcher           $teachers
      */
-    public function __construct(TeacherResponseFormatter $responseFormatter, TeacherFetcher $goals)
+    public function __construct(TeacherResponseFormatter $responseFormatter, TeacherFetcher $teachers)
     {
         $this->responseFormatter = $responseFormatter;
-        $this->goals             = $goals;
+        $this->teachers          = $teachers;
     }
 
     /**
@@ -87,5 +93,68 @@ class ShowController extends BaseController
     public function one(Teacher $teacher): Response
     {
         return $this->json($this->responseFormatter->full($teacher));
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/teachers/show/all",
+     *     tags={"teachers"},
+     *     description="Получение списка всех преподавателей",
+     *     @OA\Response(
+     *         response="200",
+     *         description="Успешный ответ",
+     *         @OA\JsonContent(ref="#/components/schemas/TeacherListResponse")
+     *     ),
+     * )
+     *
+     * @Route("/teachers/show/all", name="teachers.show.all", methods={"GET"})
+     *
+     * @return Response
+     */
+    public function all(): Response
+    {
+        return $this->json($this->teachers->getAll());
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/teachers/show/active",
+     *     tags={"teachers"},
+     *     description="Получение списка активных преподавателей",
+     *     @OA\Response(
+     *         response="200",
+     *         description="Успешный ответ",
+     *         @OA\JsonContent(ref="#/components/schemas/TeacherListResponse")
+     *     ),
+     * )
+     *
+     * @Route("/teachers/show/active", name="teachers.show.active", methods={"GET"})
+     *
+     * @return Response
+     */
+    public function active(): Response
+    {
+        return $this->json($this->teachers->getActive());
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/teachers/show/archived",
+     *     tags={"teachers"},
+     *     description="Получение списка преподавателей в архиве",
+     *     @OA\Response(
+     *         response="200",
+     *         description="Успешный ответ",
+     *         @OA\JsonContent(ref="#/components/schemas/TeacherListResponse")
+     *     ),
+     * )
+     *
+     * @Route("/teachers/show/archived", name="teachers.show.archived", methods={"GET"})
+     *
+     * @return Response
+     */
+    public function archived(): Response
+    {
+        return $this->json($this->teachers->getArchived());
     }
 }

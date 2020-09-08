@@ -100,6 +100,7 @@ class GoalFetcher
     {
         return $this->connection->createQueryBuilder()
             ->select('id', 'alias', 'name', 'status', 'sort', 'created_at')
-            ->from('lesson_goals');
+            ->from('lesson_goals')
+            ->orderBy('sort', 'ASC');
     }
 }
