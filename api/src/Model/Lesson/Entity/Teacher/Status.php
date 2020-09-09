@@ -17,6 +17,11 @@ class Status
         self::STATUS_ARCHIVED,
     ];
 
+    private const LABELS = [
+        self::STATUS_ACTIVE => 'Активен',
+        self::STATUS_ARCHIVED => 'В архиве',
+    ];
+
     /**
      * @var string
      */
@@ -93,5 +98,15 @@ class Status
     public function isEqual(self $other): bool
     {
         return $this->getValue() === $other->getValue();
+    }
+
+    /**
+     * Получение заголовка статуса
+     *
+     * @return string
+     */
+    public function getLabel(): string
+    {
+        return self::LABELS[$this->value] ?? $this->value;
     }
 }

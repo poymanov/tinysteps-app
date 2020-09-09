@@ -50,4 +50,20 @@ class StatusTest extends TestCase
 
         self::assertEquals($status, $teacher->getStatus());
     }
+
+    /**
+     * Получение заголовка активного статуса
+     */
+    public function testGetActiveLabel()
+    {
+        self::assertEquals('Активен', Status::active()->getLabel());
+    }
+
+    /**
+     * Получение заголовка архивного статуса
+     */
+    public function testGetArchivedLabel()
+    {
+        self::assertEquals('В архиве', Status::archived()->getLabel());
+    }
 }

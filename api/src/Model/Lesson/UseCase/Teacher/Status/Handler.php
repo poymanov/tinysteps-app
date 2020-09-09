@@ -8,6 +8,8 @@ use App\Model\Flusher;
 use App\Model\Lesson\Entity\Teacher\Id;
 use App\Model\Lesson\Entity\Teacher\Status;
 use App\Model\Lesson\Entity\Teacher\TeacherRepository;
+use App\Model\Lesson\Service\ChangeTeacherStatusSender;
+use App\ReadModel\User\UserFetcher;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 
@@ -19,18 +21,32 @@ class Handler
     private TeacherRepository $teachers;
 
     /**
+     * @var UserFetcher
+     */
+    private UserFetcher $users;
+
+    /**
      * @var Flusher
      */
     private Flusher $flusher;
 
     /**
-     * @param TeacherRepository $teachers
-     * @param Flusher           $flusher
+     * @var ChangeTeacherStatusSender
      */
-    public function __construct(TeacherRepository $teachers, Flusher $flusher)
+    private ChangeTeacherStatusSender $sender;
+
+    /**
+     * @param TeacherRepository         $teachers
+     * @param UserFetcher               $users
+     * @param Flusher                   $flusher
+     * @param ChangeTeacherStatusSender $sender
+     */
+    public function __construct(TeacherRepository $teachers, UserFetcher $users, Flusher $flusher, ChangeTeacherStatusSender $sender)
     {
         $this->teachers = $teachers;
+        $this->users    = $users;
         $this->flusher  = $flusher;
+        $this->sender   = $sender;
     }
 
     /**
@@ -43,10 +59,12 @@ class Handler
     {
         $status = new Status($command->status);
 
-        $goal = $this->teachers->get(new Id($command->id));
-
-        $goal->changeStatus($status);
+        $teacher = $this->teachers->get(new Id($command->id));
+        $teacher->changeStatus($status);
 
         $this->flusher->flush();
+
+        $user = $this->users->get($teacher->getUserId());
+        $this->sender->send($user->getEmail(), $status);
     }
 }
