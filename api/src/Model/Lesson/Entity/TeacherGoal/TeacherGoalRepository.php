@@ -50,6 +50,22 @@ class TeacherGoalRepository
      * @param string $teacherId
      * @param string $goalId
      *
+     * @return TeacherGoal
+     */
+    public function getByTeacherIdAndGoalId(string $teacherId, string $goalId): TeacherGoal
+    {
+        if (!$teacherGoal = $this->repo->findOneBy(['teacherId' => $teacherId, 'goalId' => $goalId])) {
+            throw new EntityNotFoundException('Назначение цели преподавателю не найдено.');
+        }
+
+        /** @var TeacherGoal $teacherGoal */
+        return $teacherGoal;
+    }
+
+    /**
+     * @param string $teacherId
+     * @param string $goalId
+     *
      * @return bool
      * @throws NoResultException
      * @throws NonUniqueResultException
@@ -71,5 +87,13 @@ class TeacherGoalRepository
     public function add(TeacherGoal $teacherGoal): void
     {
         $this->em->persist($teacherGoal);
+    }
+
+    /**
+     * @param TeacherGoal $teacherGoal
+     */
+    public function remove(TeacherGoal $teacherGoal): void
+    {
+        $this->em->remove($teacherGoal);
     }
 }

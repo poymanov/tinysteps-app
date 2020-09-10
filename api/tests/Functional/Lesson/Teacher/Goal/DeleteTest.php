@@ -2,24 +2,22 @@
 
 declare(strict_types=1);
 
-
 namespace App\Tests\Functional\Lesson\Teacher\Goal;
 
 use App\Tests\Fixtures\GoalFixture;
 use App\Tests\Fixtures\TeacherFixture;
 use App\Tests\Functional\DbWebTestCase;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
-class AddTest extends DbWebTestCase
+class DeleteTest extends DbWebTestCase
 {
-    private const BASE_URL = '/teachers/goal/add/';
+    private const BASE_URL = '/teachers/goal/remove/';
 
     private const BASE_URL_TEACHER_1 = self::BASE_URL . TeacherFixture::TEACHER_1_ID;
 
     private const BASE_URL_TEACHER_2 = self::BASE_URL . TeacherFixture::TEACHER_2_ID;
 
-    private const BASE_METHOD = Request::METHOD_POST;
+    private const BASE_METHOD = Request::METHOD_DELETE;
 
     /**
      * Попытка GET-запроса
@@ -101,7 +99,20 @@ class AddTest extends DbWebTestCase
     }
 
     /**
-     * Попытка добавления цели обучения для преподавателя, находящегося в архивном состоянии
+     * Связь между преподавателем и целью обучения не существует
+     */
+    public function testNotExistedTeacherGoal(): void
+    {
+        $this->assertBadRequest(
+            self::BASE_METHOD,
+            self::BASE_URL_TEACHER_1,
+            $this->getNotExistedTeacherGoalData(),
+            'Цель обучения не добавлена преподавателю.'
+        );
+    }
+
+    /**
+     * Попытка удаления цели обучения для преподавателя, находящегося в архивном состоянии
      */
     public function testTeacherArchived(): void
     {
@@ -114,60 +125,20 @@ class AddTest extends DbWebTestCase
     }
 
     /**
-     * Попытка добавления цели обучения, находящейся в архивном состоянии
-     */
-    public function testGoalArchived(): void
-    {
-        $this->assertBadRequest(
-            self::BASE_METHOD,
-            self::BASE_URL_TEACHER_1,
-            $this->getArchivedGoalData(),
-            'Цель обучения находится в архиве и не может быть добавлена преподавателю.'
-        );
-    }
-
-    /**
-     * Преподавателю уже добавлена указанная цель обучения
-     */
-    public function testGoalAdded(): void
-    {
-        $this->assertBadRequest(
-            self::BASE_METHOD,
-            self::BASE_URL_TEACHER_1,
-            $this->getGoalAddedData(),
-            'Цель обучения уже добавлена преподавателю.'
-        );
-    }
-
-    /**
-     * Успешное добавление цели обучения преподавателю
+     * Успешное удаление цели обучения у преподавателя
      */
     public function testSuccess(): void
     {
         $this->authAsAdmin();
 
-        $this->postWithContent(self::BASE_URL_TEACHER_1, $this->getSuccessData());
+        $this->deleteWithContent(self::BASE_URL_TEACHER_1, $this->getSuccessData());
 
-        $data = $this->getJsonData(Response::HTTP_CREATED);
+        self::assertEmpty($this->client->getResponse()->getContent());
 
-        self::assertEmpty($data);
-
-        $this->assertIsInDatabase('lesson_teachers_goals', [
+        $this->assertIsNotInDatabase('lesson_teachers_goals', [
             'teacher_id' => TeacherFixture::TEACHER_1_ID,
-            'goal_id'    => GoalFixture::GOAL_1_ID,
+            'goal_id'    => GoalFixture::GOAL_2_ID,
         ]);
-    }
-
-    /**
-     * Данные для цели обучения с ID в неправильном формате
-     *
-     * @return string[]
-     */
-    public function getNotValidGoalIdData(): array
-    {
-        return [
-            'goal_id' => '123',
-        ];
     }
 
     /**
@@ -183,38 +154,38 @@ class AddTest extends DbWebTestCase
     }
 
     /**
-     * Данные для цели обучения, находящейся в архиве
+     * Данные для несуществующей связи преподаватель-цель обучения
      *
-     * @return array
+     * @return string[]
      */
-    public function getArchivedGoalData(): array
+    public function getNotExistedTeacherGoalData(): array
     {
         return [
-            'goal_id' => GoalFixture::GOAL_5_ID,
+            'goal_id' => GoalFixture::GOAL_3_ID,
         ];
     }
 
     /**
-     * Данные для цели обучения, уже добавлена преподавателю
+     * Данные для цели обучения с ID в неправильном формате
      *
-     * @return array
+     * @return string[]
      */
-    public function getGoalAddedData(): array
+    public function getNotValidGoalIdData(): array
     {
         return [
-            'goal_id' => GoalFixture::GOAL_2_ID,
+            'goal_id' => '123',
         ];
     }
 
     /**
-     * Данные для успешного добавления цели обучения преподавателю
+     * Данные для успешного удаления цели обучения у преподавателя
      *
      * @return array
      */
     public function getSuccessData(): array
     {
         return [
-            'goal_id' => GoalFixture::GOAL_1_ID,
+            'goal_id' => GoalFixture::GOAL_2_ID,
         ];
     }
 }

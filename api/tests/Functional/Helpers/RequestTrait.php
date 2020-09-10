@@ -52,6 +52,17 @@ trait RequestTrait
     }
 
     /**
+     * Delete-запрос с передачей данных в json
+     *
+     * @param string $url
+     * @param array  $data
+     */
+    public function deleteWithContent(string $url, array $data): void
+    {
+        $this->requestWithContent(Request::METHOD_DELETE, $url, $data);
+    }
+
+    /**
      * Запрос с передачей данных в json
      *
      * @param string $method
