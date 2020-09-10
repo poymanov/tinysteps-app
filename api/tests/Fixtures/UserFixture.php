@@ -23,6 +23,8 @@ class UserFixture extends Fixture
 
     public const ALREADY_REQUESTED_UUID = '00000000-0000-0000-0000-000000000102';
 
+    public const REQUEST_RESET_TOKEN_UUID = '00000000-0000-0000-0000-000000000103';
+
     private ResetTokenizer $tokenizer;
 
     /**
@@ -70,6 +72,7 @@ class UserFixture extends Fixture
 
         $resetToken             = new ResetToken('123', (new DateTimeImmutable())->add(new DateInterval('P1Y')));
         $requestedResetPassword = $this->getConfirmedUser()
+            ->withId(new Id(self::REQUEST_RESET_TOKEN_UUID))
             ->viaEmail(new Email('request-reset-token@email.test'))
             ->withResetToken($resetToken)
             ->build();

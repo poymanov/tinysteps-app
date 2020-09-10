@@ -19,6 +19,8 @@ class TeacherFixture extends Fixture
 
     public const TEACHER_2_ID = '00000000-0000-0000-0000-000000000002';
 
+    public const TEACHER_3_ID = '00000000-0000-0000-0000-000000000003';
+
     /**
      * @param ObjectManager $manager
      *
@@ -41,6 +43,15 @@ class TeacherFixture extends Fixture
             ->withAlias(new Alias('already-request-user'))
             ->withStatus(Status::archived())
             ->withCreatedAt(new DateTimeImmutable('2020-01-01 16:00:00'))
+            ->build();
+
+        $manager->persist($teacher);
+
+        $teacher = (new TeacherBuilder())
+            ->withId(new Id(self::TEACHER_3_ID))
+            ->withUserId(UserFixture::REQUEST_RESET_TOKEN_UUID)
+            ->withAlias(new Alias('request-reset-token'))
+            ->withCreatedAt(new DateTimeImmutable('2020-01-01 17:00:00'))
             ->build();
 
         $manager->persist($teacher);

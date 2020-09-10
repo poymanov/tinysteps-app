@@ -46,6 +46,16 @@ class ListTest extends DbWebTestCase
                 'status'      => 'archived',
                 'created_at'  => '2020-01-01 16:00:00',
             ],
+            [
+                'id'          => TeacherFixture::TEACHER_3_ID,
+                'user_id'     => UserFixture::REQUEST_RESET_TOKEN_UUID,
+                'alias'       => 'request-reset-token',
+                'description' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient.',
+                'price'       => 100,
+                'rating'      => 0.0,
+                'status'      => 'active',
+                'created_at'  => '2020-01-01 17:00:00',
+            ],
         ], $data);
     }
 
@@ -68,6 +78,16 @@ class ListTest extends DbWebTestCase
                 'rating'      => 0.0,
                 'status'      => 'active',
                 'created_at'  => '2020-01-01 15:00:00',
+            ],
+            [
+                'id'          => TeacherFixture::TEACHER_3_ID,
+                'user_id'     => UserFixture::REQUEST_RESET_TOKEN_UUID,
+                'alias'       => 'request-reset-token',
+                'description' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient.',
+                'price'       => 100,
+                'rating'      => 0.0,
+                'status'      => 'active',
+                'created_at'  => '2020-01-01 17:00:00',
             ],
         ], $data);
     }
