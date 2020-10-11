@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace App\Tests\Functional\Lesson\Teacher\Goal;
 
 use App\Tests\Fixtures\GoalFixture;

@@ -21,6 +21,8 @@ class TeacherFixture extends Fixture
 
     public const TEACHER_3_ID = '00000000-0000-0000-0000-000000000003';
 
+    public const REFERENCE_TEACHER_1 = 'teacher_1';
+
     /**
      * @param ObjectManager $manager
      *
@@ -36,6 +38,8 @@ class TeacherFixture extends Fixture
             ->build();
 
         $manager->persist($teacher);
+
+        $this->setReference(self::REFERENCE_TEACHER_1, $teacher);
 
         $teacher = (new TeacherBuilder())
             ->withId(new Id(self::TEACHER_2_ID))
