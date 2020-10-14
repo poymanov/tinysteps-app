@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Model\Lesson\Entity\Schedule;
 
+use App\Model\EntityNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -28,6 +29,21 @@ class ScheduleRepository
     {
         $this->em   = $em;
         $this->repo = $em->getRepository(Schedule::class);
+    }
+
+    /**
+     * @param Id $id
+     *
+     * @return Schedule
+     */
+    public function get(Id $id): Schedule
+    {
+        if (!$schedule = $this->repo->find($id->getValue())) {
+            throw new EntityNotFoundException('График преподавателя не найден.');
+        }
+
+        /** @var Schedule $schedule */
+        return $schedule;
     }
 
     /**
@@ -56,5 +72,13 @@ class ScheduleRepository
     public function add(Schedule $schedule): void
     {
         $this->em->persist($schedule);
+    }
+
+    /**
+     * @param Schedule $schedule
+     */
+    public function remove(Schedule $schedule): void
+    {
+        $this->em->remove($schedule);
     }
 }

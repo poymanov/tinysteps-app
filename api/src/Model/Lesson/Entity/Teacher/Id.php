@@ -48,6 +48,4 @@ class Id
     {
         return $this->getValue();
     }
-
-
 }

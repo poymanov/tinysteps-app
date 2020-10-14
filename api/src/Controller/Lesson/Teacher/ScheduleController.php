@@ -21,7 +21,7 @@ class ScheduleController extends BaseController
      * @OA\Post(
      *     path="/teachers/schedule/add/{id}",
      *     tags={"teachers"},
-     *     description="Назначения преподавателю графика занятия",
+     *     description="Назначение преподавателю графика занятия",
      *     security={
      *         {"bearerAuth": {}}
      *     },
@@ -85,5 +85,71 @@ class ScheduleController extends BaseController
         $handler->handle($command);
 
         return $this->json([], Response::HTTP_CREATED);
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/teachers/schedule/remove/{id}",
+     *     tags={"teachers"},
+     *     description="Удаление графика занятия у преподавателя",
+     *     security={
+     *         {"bearerAuth": {}}
+     *     },
+     *     @OA\Parameter(name="id", in="path", required=true, description="Идентификатор преподавателя", @OA\Schema(type="string")),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              required={"id"},
+     *              @OA\Property(property="goal_id", type="string", example="00000000-0000-0000-0000-000000000001", description="Идентификатор графика, который удаляется у преподавателя"),
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="204",
+     *         description="Успешное выполнение удаления",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Прочие ошибки",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorModel")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Неавторизованный доступ",
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Доступ только для администраторов",
+     *         @OA\JsonContent(ref="#/components/schemas/NotGrantedErrorModel")
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Ошибки валидации",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorModelValidationFailed")
+     *     ),
+     * )
+     *
+     * @Route("/teachers/schedule/remove/{id}", name="teachers.schedules.remove", methods={"DELETE"})
+     *
+     * @IsGranted("ROLE_ADMIN")
+     *
+     * @param Request                 $request
+     * @param Teacher                 $teacher
+     * @param Schedule\Remove\Handler $handler
+     *
+     * @return Response
+     */
+    public function remove(Request $request, Teacher $teacher, Schedule\Remove\Handler $handler): Response
+    {
+        /** @var Schedule\Remove\Command $command */
+        $command = $this->getSerializer()->deserialize($request->getContent(), Schedule\Remove\Command::class, 'json', [
+            'object_to_populate' => new Schedule\Remove\Command($teacher->getId()->getValue()),
+            'ignored_attributes' => ['teacher_id'],
+        ]);
+
+        $this->validateCommand($command);
+
+        $handler->handle($command);
+
+        return $this->json([], Response::HTTP_NO_CONTENT);
     }
 }

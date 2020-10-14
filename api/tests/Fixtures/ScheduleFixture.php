@@ -14,6 +14,8 @@ use Doctrine\Persistence\ObjectManager;
 
 class ScheduleFixture extends Fixture implements DependentFixtureInterface
 {
+    public const ID_1 = '00000000-0000-0000-0000-000000000001';
+
     public function load(ObjectManager $manager)
     {
         /** @var Teacher $teacher */
@@ -23,7 +25,7 @@ class ScheduleFixture extends Fixture implements DependentFixtureInterface
         $date = $date->modify('+1 year');
         $date = $date->setTime(12, 15, 0);
 
-        $schedule = new Schedule(Id::next(), $teacher, $date, new DateTimeImmutable());
+        $schedule = new Schedule(new Id(self::ID_1), $teacher, $date, new DateTimeImmutable());
 
         $manager->persist($schedule);
         $manager->flush();

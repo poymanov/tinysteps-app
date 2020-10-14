@@ -111,9 +111,6 @@ class GoalController extends BaseController
      *         {"bearerAuth": {}}
      *     },
      *     @OA\Parameter(name="id", in="path", required=true, description="Идентификатор преподавателя", @OA\Schema(type="string")),
-     *     security={
-     *         {"bearerAuth": {}}
-     *     },
      *     @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(
