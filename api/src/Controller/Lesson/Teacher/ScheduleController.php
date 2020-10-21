@@ -7,16 +7,29 @@ namespace App\Controller\Lesson\Teacher;
 use App\Controller\BaseController;
 use App\Model\Lesson\Entity\Teacher\Teacher;
 use App\Model\Lesson\UseCase\Schedule;
+use App\ReadModel\Lesson\ScheduleFetcher;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ScheduleController extends BaseController
 {
+    /** @var ScheduleFetcher */
+    private ScheduleFetcher $scheduleFetcher;
+
+    /**
+     * @param ScheduleFetcher $scheduleFetcher
+     */
+    public function __construct(ScheduleFetcher $scheduleFetcher)
+    {
+        $this->scheduleFetcher = $scheduleFetcher;
+    }
+
     /**
      * @OA\Post(
      *     path="/teachers/schedule/add/{id}",
@@ -151,5 +164,36 @@ class ScheduleController extends BaseController
         $handler->handle($command);
 
         return $this->json([], Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/teachers/schedule/show/all/{id}",
+     *     tags={"teachers"},
+     *     description="Получение графика уроков преподавателя",
+     *     @OA\Parameter(name="id", in="path", required=true, description="Идентификатор преподавателя", @OA\Schema(type="string")),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Успешный ответ",
+     *         @OA\JsonContent(
+     *              @OA\Property(property="id", type="string", example="00000000-0000-0000-0000-000000000001"),
+     *              @OA\Property(property="date", type="string", example="2021-10-14 12:15:00"),
+     *         )
+     *     ),
+     * )
+     *
+     * @Route("/teachers/schedule/show/all/{id}", name="teachers.schedule.show.all")
+     *
+     * @param Teacher $teacher
+     *
+     * @return Response
+     */
+    public function showAll(Teacher $teacher): Response
+    {
+        if ($teacher->getStatus()->isArchived()) {
+            throw new NotFoundHttpException();
+        }
+
+        return $this->json($this->scheduleFetcher->getAllByTeacher($teacher->getId()));
     }
 }

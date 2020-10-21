@@ -180,9 +180,7 @@ class AddTest extends DbWebTestCase
      */
     public function getScheduleAddedData(): array
     {
-        $date = new DateTimeImmutable();
-        $date = $date->modify('+1 year');
-        $date = $date->setTime(12, 15, 0);
+        $date = new DateTimeImmutable('2030-12-12 12:15:00');
 
         return [
             'date' => $date->format('Y-m-d H:i:s'),

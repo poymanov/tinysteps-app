@@ -21,9 +21,7 @@ class ScheduleFixture extends Fixture implements DependentFixtureInterface
         /** @var Teacher $teacher */
         $teacher = $this->getReference(TeacherFixture::REFERENCE_TEACHER_1);
 
-        $date = new DateTimeImmutable();
-        $date = $date->modify('+1 year');
-        $date = $date->setTime(12, 15, 0);
+        $date = new DateTimeImmutable('2030-12-12 12:15:00');
 
         $schedule = new Schedule(new Id(self::ID_1), $teacher, $date, new DateTimeImmutable());
 
