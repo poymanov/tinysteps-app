@@ -22,6 +22,8 @@ services:
         build:
             context: ./docker/api/php
             dockerfile: php-fpm.docker
+        env_file:
+            - ./docker/api/php/.env
         volumes:
             - ./api:/app
     api-php-cli:
