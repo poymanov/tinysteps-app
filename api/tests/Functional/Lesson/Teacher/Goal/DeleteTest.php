@@ -68,7 +68,7 @@ class DeleteTest extends DbWebTestCase
             self::BASE_METHOD,
             self::BASE_URL_TEACHER_1,
             [],
-            ['goalId' => ['Значение не должно быть пустым.']]
+            ['goal_id' => ['Значение не должно быть пустым.']]
         );
     }
 
@@ -81,7 +81,7 @@ class DeleteTest extends DbWebTestCase
             self::BASE_METHOD,
             self::BASE_URL_TEACHER_1,
             $this->getNotValidGoalIdData(),
-            ['goalId' => ['Значение не соответствует формату UUID.']]
+            ['goal_id' => ['Значение не соответствует формату UUID.']]
         );
     }
 

@@ -50,7 +50,7 @@ class CreateTest extends DbWebTestCase
             self::BASE_URL,
             [],
             [
-                'userId'      => ['Значение не должно быть пустым.'],
+                'user_id'      => ['Значение не должно быть пустым.'],
                 'description' => ['Значение не должно быть пустым.'],
                 'price'       => ['Значение не должно быть пустым.'],
             ]
@@ -67,7 +67,7 @@ class CreateTest extends DbWebTestCase
             self::BASE_URL,
             $this->getNotValidUserIdData(),
             [
-                'userId' => ['Значение не соответствует формату UUID.'],
+                'user_id' => ['Значение не соответствует формату UUID.'],
             ]
         );
     }

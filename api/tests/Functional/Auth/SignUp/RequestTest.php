@@ -29,11 +29,11 @@ class RequestTest extends DbWebTestCase
             self::BASE_URL,
             [],
             [
-                'firstName'            => ['Значение не должно быть пустым.'],
-                'lastName'             => ['Значение не должно быть пустым.'],
+                'first_name'            => ['Значение не должно быть пустым.'],
+                'last_name'             => ['Значение не должно быть пустым.'],
                 'email'                => ['Значение не должно быть пустым.'],
                 'password'             => ['Значение не должно быть пустым.'],
-                'passwordConfirmation' => ['Значение не должно быть пустым.'],
+                'password_confirmation' => ['Значение не должно быть пустым.'],
             ]
         );
     }
@@ -48,7 +48,7 @@ class RequestTest extends DbWebTestCase
             self::BASE_URL,
             $this->getNotEqualPasswordData(),
             [
-                'passwordConfirmation' => ['Введенные пароли должны совпадать.']
+                'password_confirmation' => ['Введенные пароли должны совпадать.']
             ]
         );
     }

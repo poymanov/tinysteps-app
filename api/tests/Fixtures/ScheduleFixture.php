@@ -16,16 +16,49 @@ class ScheduleFixture extends Fixture implements DependentFixtureInterface
 {
     public const ID_1 = '00000000-0000-0000-0000-000000000001';
 
+    public const ID_2 = '00000000-0000-0000-0000-000000000002';
+
+    public const ID_3 = '00000000-0000-0000-0000-000000000003';
+
+    public const REFERENCE_SCHEDULE_2 = 'schedule_2';
+
     public function load(ObjectManager $manager)
     {
         /** @var Teacher $teacher */
         $teacher = $this->getReference(TeacherFixture::REFERENCE_TEACHER_1);
 
-        $date = new DateTimeImmutable('2030-12-12 12:15:00');
+        /** @var Teacher $teacherAnother */
+        $teacherAnother = $this->getReference(TeacherFixture::REFERENCE_TEACHER_2);
 
-        $schedule = new Schedule(new Id(self::ID_1), $teacher, $date, new DateTimeImmutable());
+        $schedule = new Schedule(
+            new Id(self::ID_1),
+            $teacher,
+            new DateTimeImmutable('2030-12-12 12:15:00'),
+            new DateTimeImmutable()
+        );
 
         $manager->persist($schedule);
+
+        $schedule = new Schedule(
+            new Id(self::ID_2),
+            $teacherAnother,
+            new DateTimeImmutable('2030-12-11 12:15:00'),
+            new DateTimeImmutable()
+        );
+
+        $manager->persist($schedule);
+
+        $this->setReference(self::REFERENCE_SCHEDULE_2, $schedule);
+
+        $schedule = new Schedule(
+            new Id(self::ID_3),
+            $teacherAnother,
+            new DateTimeImmutable('1990-12-12 12:15:00'),
+            new DateTimeImmutable()
+        );
+
+        $manager->persist($schedule);
+
         $manager->flush();
     }
 

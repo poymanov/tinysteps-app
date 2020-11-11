@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Serializer;
 
+use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -30,9 +31,13 @@ class ValidationSerializer
             'errors' => [],
         ];
 
+        $nameConverter = new CamelCaseToSnakeCaseNameConverter();
+
         foreach ($violations as $violation) {
             /** @var ConstraintViolationInterface $violation */
-            $data['errors'][$violation->getPropertyPath()][] = $violation->getMessage();
+
+            $property = $nameConverter->normalize($violation->getPropertyPath());
+            $data['errors'][$property][] = $violation->getMessage();
         }
 
         return $this->serializer->serialize($data, 'json');

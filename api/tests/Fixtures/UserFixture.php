@@ -8,6 +8,7 @@ use App\Model\User\Entity\User\Email;
 use App\Model\User\Entity\User\Id;
 use App\Model\User\Entity\User\Name;
 use App\Model\User\Entity\User\ResetToken;
+use App\Model\User\Service\PasswordHasher;
 use App\Model\User\Service\ResetTokenizer;
 use App\Tests\Builder\User\UserBuilder;
 use DateInterval;
@@ -27,12 +28,16 @@ class UserFixture extends Fixture
 
     private ResetTokenizer $tokenizer;
 
+    private PasswordHasher $hasher;
+
     /**
      * @param ResetTokenizer $tokenizer
+     * @param PasswordHasher $hasher
      */
-    public function __construct(ResetTokenizer $tokenizer)
+    public function __construct(ResetTokenizer $tokenizer, PasswordHasher $hasher)
     {
         $this->tokenizer = $tokenizer;
+        $this->hasher    = $hasher;
     }
 
     public function load(ObjectManager $manager)
@@ -45,9 +50,10 @@ class UserFixture extends Fixture
 
         $manager->persist($existing);
 
+        $notConfirmedPasswordHash = $this->hasher->hash('123qwe');
         $notConfirmed = (new UserBuilder())
             ->withId(new Id(self::NOT_CONFIRMED_UUID))
-            ->viaEmail(new Email('not-confirmed-confirm@app.test'), null, 'not-confirmed-token')
+            ->viaEmail(new Email('not-confirmed-confirm@app.test'), $notConfirmedPasswordHash, 'not-confirmed-token')
             ->build();
 
         $manager->persist($notConfirmed);
