@@ -4,6 +4,7 @@ services:
         build:
             context: ./docker/gateway/nginx
         ports:
+            - "8080:8080"
             - "8081:8081"
             - "8082:8082"
             - "8083:8083"
@@ -11,6 +12,7 @@ services:
             - api
             - api-docs
             - mailer
+            - frontend
     api:
         build:
             context: ./docker/api/nginx
@@ -45,6 +47,23 @@ services:
             context: ./docker/api-docs/nginx
         volumes:
             - ./api-docs:/app
+    frontend:
+        build:
+            context: docker/frontend/nginx
+        depends_on:
+            - frontend-node
+    frontend-node:
+        build:
+            context: docker/frontend/node
+        volumes:
+            - ./frontend:/app
+        command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && yarn start"
+        tty: true
+    frontend-node-cli:
+        build:
+            context: docker/frontend/node
+        volumes:
+            - ./frontend:/app
     mailer:
         image: mailhog/mailhog
 volumes:
