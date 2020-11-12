@@ -1,5 +1,6 @@
 import React from "react";
 import TeacherTypes from "../../types/teachers";
+import {Link} from "react-router-dom";
 
 function TeacherItem(props) {
     const {teacher} = props;
@@ -13,7 +14,7 @@ function TeacherItem(props) {
                         <p className="float-right">Рейтинг: {teacher.rating} Ставка: {teacher.price} / час</p>
                         <h2 className="h4">{teacher.name}</h2>
                         <p>{teacher.description}</p>
-                        <a href="#" className="btn btn-outline-primary btn-sm mr-3 mb-2">Показать информацию и расписание</a>
+                        <Link to={`/teachers/${teacher.alias}`} className="btn btn-outline-primary btn-sm mr-3 mb-2">Показать информацию и расписание</Link>
                     </div>
                 </div>
             </div>

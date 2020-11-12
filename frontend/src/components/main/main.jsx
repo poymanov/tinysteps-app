@@ -10,6 +10,7 @@ function Main() {
                 <strong>Найдите идеального <br />репетитора английского, <br />занимайтесь онлайн</strong>
             </h1>
             <GoalsList />
+            <h2 className="h5 text-center mb-5">Свободны прямо сейчас</h2>
             <TeachersList />
             <PromoTeacherRequest />
         </Fragment>
