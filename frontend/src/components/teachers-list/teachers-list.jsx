@@ -1,8 +1,10 @@
 import React, {Fragment} from "react";
 import TeacherItem from "../teacher-item/teacher-item";
-import {teachers} from "../../mocks/teachers";
+import TeacherTypes from "../../types/teachers";
 
-function TeachersList() {
+function TeachersList(props) {
+    const {teachers} = props;
+
     return (
         <Fragment>
             <div className="row">
@@ -13,5 +15,9 @@ function TeachersList() {
         </Fragment>
     );
 }
+
+TeachersList.propTypes = {
+    teachers: TeacherTypes.list.isRequired
+};
 
 export default TeachersList;

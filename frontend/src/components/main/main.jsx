@@ -5,21 +5,28 @@ import TeachersList from "../teachers-list/teachers-list";
 import PromoTeacherRequest from "../promo-teacher-request/promo-teacher-request";
 import PropTypes from "prop-types";
 import GoalTypes from "../../types/goals";
-import {goalsSelector} from "../../store/selectors";
-import {fetchGoals} from "../../store/api-actions";
+import {goalsSelector, teachersSelector} from "../../store/selectors";
+import {fetchGoals, fetchTeachers} from "../../store/api-actions";
+import TeacherTypes from "../../types/teachers";
 
 class Main extends PureComponent {
     componentDidMount() {
         this.props.fetchGoals();
+        this.props.fetchTeachers();
     }
 
     render() {
-        const {goals} = this.props;
+        const {goals, teachers} = this.props;
 
         let goalsList = null;
+        let teachersList = null;
 
         if (goals.length > 0) {
             goalsList = <GoalsList goals={goals} />;
+        }
+
+        if (teachers.length > 0) {
+            teachersList = <TeachersList teachers={teachers} />;
         }
 
         return (
@@ -29,7 +36,7 @@ class Main extends PureComponent {
                 </h1>
                 {goalsList}
                 <h2 className="h5 text-center mb-5">Свободны прямо сейчас</h2>
-                <TeachersList/>
+                {teachersList}
                 <PromoTeacherRequest/>
             </Fragment>
         );
@@ -38,17 +45,23 @@ class Main extends PureComponent {
 
 Main.propTypes = {
     fetchGoals: PropTypes.func.isRequired,
-    goals: GoalTypes.list
+    fetchTeachers: PropTypes.func.isRequired,
+    goals: GoalTypes.list,
+    teachers: TeacherTypes.list
 };
 
 const mapStateToProps = (state) => ({
     goals: goalsSelector(state),
+    teachers: teachersSelector(state)
 });
 
 const mapDispatchToProps = (dispatch) => ({
     fetchGoals() {
         dispatch(fetchGoals());
     },
+    fetchTeachers () {
+        dispatch(fetchTeachers());
+    }
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

@@ -49,6 +49,10 @@ class OneTest extends DbWebTestCase
             'id'          => TeacherFixture::TEACHER_1_ID,
             'user_id'     => UserFixture::EXISTING_UUID,
             'alias'       => 'existing-user',
+            'name'        => [
+                'first' => 'existing',
+                'last'  => 'user',
+            ],
             'description' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient.',
             'price'       => 100,
             'rating'      => 0.0,

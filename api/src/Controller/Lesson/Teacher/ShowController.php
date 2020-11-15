@@ -6,8 +6,8 @@ namespace App\Controller\Lesson\Teacher;
 
 use App\Controller\BaseController;
 use App\Model\Lesson\Entity\Teacher\Teacher;
-use App\Model\Lesson\Service\TeacherResponseFormatter;
 use App\ReadModel\Lesson\TeacherFetcher;
+use Exception;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,6 +20,10 @@ use Symfony\Component\Routing\Annotation\Route;
  *     @OA\Property(property="id", type="string", example="00000000-0000-0000-0000-000000000001"),
  *     @OA\Property(property="user_id", type="string", description="Идентификатор пользователя, которого назначили преподавателем", example="00000000-0000-0000-0000-000000000001"),
  *     @OA\Property(property="alias", type="string", example="existing-user"),
+ *     @OA\Property(property="name", type="object",
+ *          @OA\Property(property="first", type="string", example="First"),
+ *          @OA\Property(property="last", type="string", example="Last"),
+ *     ),
  *     @OA\Property(property="description", type="string", example="Text"),
  *     @OA\Property(property="price", type="integer", description="Стоимость услуг преподавателя", example="100"),
  *     @OA\Property(property="rating", type="float", description="Рейтинг преподавателя", example="4"),
@@ -36,23 +40,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class ShowController extends BaseController
 {
     /**
-     * @var TeacherResponseFormatter
-     */
-    private TeacherResponseFormatter $responseFormatter;
-
-    /**
      * @var TeacherFetcher
      */
     private TeacherFetcher $teachers;
 
     /**
-     * @param TeacherResponseFormatter $responseFormatter
-     * @param TeacherFetcher           $teachers
+     * @param TeacherFetcher $teachers
      */
-    public function __construct(TeacherResponseFormatter $responseFormatter, TeacherFetcher $teachers)
+    public function __construct(TeacherFetcher $teachers)
     {
-        $this->responseFormatter = $responseFormatter;
-        $this->teachers          = $teachers;
+        $this->teachers = $teachers;
     }
 
     /**
@@ -89,10 +86,11 @@ class ShowController extends BaseController
      * @param Teacher $teacher
      *
      * @return Response
+     * @throws Exception
      */
     public function one(Teacher $teacher): Response
     {
-        return $this->json($this->responseFormatter->full($teacher));
+        return $this->json($this->teachers->getOne($teacher->getId()->getValue()));
     }
 
     /**
@@ -110,6 +108,7 @@ class ShowController extends BaseController
      * @Route("/teachers/show/all", name="teachers.show.all", methods={"GET"})
      *
      * @return Response
+     * @throws Exception
      */
     public function all(): Response
     {
@@ -131,6 +130,7 @@ class ShowController extends BaseController
      * @Route("/teachers/show/active", name="teachers.show.active", methods={"GET"})
      *
      * @return Response
+     * @throws Exception
      */
     public function active(): Response
     {
@@ -152,6 +152,7 @@ class ShowController extends BaseController
      * @Route("/teachers/show/archived", name="teachers.show.archived", methods={"GET"})
      *
      * @return Response
+     * @throws Exception
      */
     public function archived(): Response
     {
