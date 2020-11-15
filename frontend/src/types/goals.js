@@ -1,14 +1,17 @@
 import PropTypes from "prop-types";
 
 const goal = PropTypes.shape({
-    id: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
     alias: PropTypes.string.isRequired,
-    icon: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
+    sort: PropTypes.number.isRequired,
+    status: PropTypes.number.isRequired,
+    createdAt: PropTypes.string.isRequired,
 });
 
 const GoalTypes = {
-    item: goal
+    item: goal,
+    list: PropTypes.arrayOf(goal.isRequired)
 };
 
 export default GoalTypes;

@@ -6,16 +6,17 @@ import browserHistory from "../../services/browser-history";
 import Goals from "../goals/goals";
 import Teacher from "../teacher/teacher";
 import TeacherRequest from "../teacher-request/teacher-request";
+import {AppRoute} from "../../constants/const";
 
 function App() {
     return (
         <BrowserRouter history={browserHistory}>
             <Switch>
                 <Layout>
-                    <Route exact path="/"><Main/></Route>
-                    <Route exact path="/goals/:alias"><Goals/></Route>
-                    <Route exact path="/teachers/:alias"><Teacher/></Route>
-                    <Route exact path="/request"><TeacherRequest/></Route>
+                    <Route exact path={AppRoute.ROOT}><Main/></Route>
+                    <Route exact path={AppRoute.GOALS + `/:alias`}><Goals/></Route>
+                    <Route exact path={AppRoute.TEACHERS + `/:alias`}><Teacher/></Route>
+                    <Route exact path={AppRoute.REQUEST}><TeacherRequest/></Route>
                 </Layout>
             </Switch>
         </BrowserRouter>

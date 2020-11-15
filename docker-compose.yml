@@ -55,6 +55,8 @@ services:
     frontend-node:
         build:
             context: docker/frontend/node
+        env_file:
+            - ./docker/frontend/node/.env
         volumes:
             - ./frontend:/app
         command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && yarn start"
