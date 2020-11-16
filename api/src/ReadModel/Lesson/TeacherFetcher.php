@@ -2,17 +2,15 @@
 
 declare(strict_types=1);
 
-
 namespace App\ReadModel\Lesson;
-
 
 use App\Model\Lesson\Entity\Teacher\Status;
 use App\Model\Lesson\Entity\Teacher\Teacher;
 use App\Model\Lesson\Service\TeacherResponseFormatter;
+use App\ReadModel\Lesson\Helpers\TeacherFetcherQueryHelper;
 use App\ReadModel\NotFoundException;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\FetchMode;
-use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 
@@ -23,6 +21,8 @@ class TeacherFetcher
      */
     private $connection;
 
+    /** @var TeacherFetcherQueryHelper */
+    private TeacherFetcherQueryHelper $queryHelper;
 
     /**
      * @var EntityManagerInterface
@@ -33,18 +33,21 @@ class TeacherFetcher
     private TeacherResponseFormatter $responseFormatter;
 
     /**
-     * @param Connection               $connection
-     * @param TeacherResponseFormatter $responseFormatter
-     * @param EntityManagerInterface   $em
+     * @param Connection                $connection
+     * @param TeacherResponseFormatter  $responseFormatter
+     * @param EntityManagerInterface    $em
+     * @param TeacherFetcherQueryHelper $queryHelper
      */
     public function __construct(
         Connection $connection,
         TeacherResponseFormatter $responseFormatter,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        TeacherFetcherQueryHelper $queryHelper
     ) {
         $this->connection = $connection;
         $this->responseFormatter = $responseFormatter;
         $this->repository = $em->getRepository(Teacher::class);
+        $this->queryHelper = $queryHelper;
     }
 
     /**
@@ -70,9 +73,9 @@ class TeacherFetcher
      */
     public function getOne(string $id): array
     {
-        $stmt = $this->getBaseQuery()
-            ->where('lt.id = :id')
-            ->setParameter(':id', $id)->execute();
+        $stmt = $this->queryHelper->getBaseQuery();
+        $stmt = $this->queryHelper->getWithId($stmt, $id);
+        $stmt = $stmt->execute();
 
         $stmt->setFetchMode(FetchMode::CUSTOM_OBJECT, TeacherView::class);
         $teacher = $stmt->fetch();
@@ -88,7 +91,10 @@ class TeacherFetcher
      */
     public function getAll(): array
     {
-        $stmt = $this->getBaseListQuery()->execute();
+        $stmt = $this->queryHelper->getBaseQuery();
+        $stmt = $this->queryHelper->getWithOrder($stmt, TeacherFetcherQueryHelper::TEACHERS_TABLE_ALIAS . '.id');
+        $stmt = $stmt->execute();
+
         $stmt->setFetchMode(FetchMode::CUSTOM_OBJECT, TeacherView::class);
         $teachers = $stmt->fetchAll();
 
@@ -103,7 +109,11 @@ class TeacherFetcher
      */
     public function getActive(): array
     {
-        $stmt = $this->getBaseListQuery(Status::active())->execute();
+        $stmt = $this->queryHelper->getBaseQuery();
+        $stmt = $this->queryHelper->getWithStatus($stmt, Status::active());
+        $stmt = $this->queryHelper->getWithOrder($stmt, TeacherFetcherQueryHelper::TEACHERS_TABLE_ALIAS . '.id');
+        $stmt = $stmt->execute();
+
         $stmt->setFetchMode(FetchMode::CUSTOM_OBJECT, TeacherView::class);
         $teachers = $stmt->fetchAll();
 
@@ -118,7 +128,10 @@ class TeacherFetcher
      */
     public function getArchived(): array
     {
-        $stmt = $this->getBaseListQuery(Status::archived())->execute();
+        $stmt = $this->queryHelper->getBaseQuery();
+        $stmt = $this->queryHelper->getWithStatus($stmt, Status::archived());
+        $stmt = $this->queryHelper->getWithOrder($stmt, TeacherFetcherQueryHelper::TEACHERS_TABLE_ALIAS . '.id');
+        $stmt = $stmt->execute();
 
         $stmt->setFetchMode(FetchMode::CUSTOM_OBJECT, TeacherView::class);
         $teachers = $stmt->fetchAll();
@@ -127,44 +140,25 @@ class TeacherFetcher
     }
 
     /**
-     * Базовый запрос списка всех преподавателей
+     * Получение активных преподавателей по цели обучения
      *
-     * @param Status|null $status
+     * @param string $goalId
      *
-     * @return QueryBuilder
+     * @return array
+     * @throws Exception
      */
-    private function getBaseListQuery(?Status $status = null): QueryBuilder
+    public function getActiveByGoal(string $goalId): array
     {
-        $stmt = $this->getBaseQuery();
+        $stmt = $this->queryHelper->getBaseQuery();
+        $stmt = $this->queryHelper->getWithStatus($stmt, Status::active());
+        $stmt = $this->queryHelper->getWithGoalId($stmt, $goalId);
+        $stmt = $this->queryHelper->getWithOrder($stmt, TeacherFetcherQueryHelper::TEACHERS_TABLE_ALIAS . '.id');
+        $stmt = $stmt->execute();
 
-        if ($status) {
-            $stmt->where('lt.status = :status')->setParameter(':status', $status->getValue());
-        }
 
-        $stmt->orderBy('id', 'ASC');
+        $stmt->setFetchMode(FetchMode::CUSTOM_OBJECT, TeacherView::class);
+        $teachers = $stmt->fetchAll();
 
-        return $stmt;
-    }
-
-    /**
-     * Базовый запрос для преподавателей
-     */
-    private function getBaseQuery(): QueryBuilder
-    {
-        return $this->connection->createQueryBuilder()
-            ->select(
-                'lt.id',
-                'lt.user_id',
-                'lt.alias',
-                'lt.description',
-                'lt.price',
-                'lt.rating',
-                'lt.status',
-                'lt.created_at',
-                'uu.name_first',
-                'uu.name_last',
-            )
-            ->from('lesson_teachers', 'lt')
-            ->innerJoin('lt', 'user_users', 'uu', 'lt.user_id = uu.id');
+        return $this->responseFormatter->fullList($teachers);
     }
 }

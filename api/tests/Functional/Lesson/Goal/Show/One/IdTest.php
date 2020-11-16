@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Functional\Lesson\Goal\Show;
+namespace App\Tests\Functional\Lesson\Goal\Show\One;
 
 use App\Tests\Fixtures\GoalFixture;
 use App\Tests\Functional\DbWebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class OneTest extends DbWebTestCase
+class IdTest extends DbWebTestCase
 {
-    private const BASE_URL = '/goals/show/one/';
+    private const BASE_URL = '/goals/show/one/id/';
 
     private const BASE_URL_GOAL_1 = self::BASE_URL . GoalFixture::GOAL_1_ID;
 

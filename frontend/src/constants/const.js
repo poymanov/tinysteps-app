@@ -6,6 +6,8 @@ export const AppRoute = {
 };
 
 export const APIRoute = {
-    GOALS_ACTIVE: `/goals/show/active`,
-    TEACHERS_ACTIVE: `/teachers/show/active`
+    GOALS_ACTIVE: `/goals/show/all/active`,
+    TEACHERS_ACTIVE: `/teachers/show/all/active`,
+    TEACHERS_ACTIVE_BY_GOAL: `/teachers/show/all/active/goal`,
+    GOAL: `/goals/show/one/alias`
 };

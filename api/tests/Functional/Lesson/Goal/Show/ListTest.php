@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ListTest extends DbWebTestCase
 {
-    private const BASE_URL = '/goals/show/';
+    private const BASE_URL = '/goals/show/all';
 
     private const BASE_METHOD = Request::METHOD_GET;
 
@@ -20,7 +20,7 @@ class ListTest extends DbWebTestCase
      */
     public function testAll(): void
     {
-        $this->client->request(self::BASE_METHOD, self::BASE_URL . 'all');
+        $this->client->request(self::BASE_METHOD, self::BASE_URL);
 
         $data = $this->getJsonData(Response::HTTP_OK);
 
@@ -73,7 +73,7 @@ class ListTest extends DbWebTestCase
      */
     public function testActive(): void
     {
-        $this->client->request(self::BASE_METHOD, self::BASE_URL . 'active');
+        $this->client->request(self::BASE_METHOD, self::BASE_URL . '/active');
 
         $data = $this->getJsonData(Response::HTTP_OK);
 
@@ -118,7 +118,7 @@ class ListTest extends DbWebTestCase
      */
     public function testArchived(): void
     {
-        $this->client->request(self::BASE_METHOD, self::BASE_URL . 'archived');
+        $this->client->request(self::BASE_METHOD, self::BASE_URL . '/archived');
 
         $data = $this->getJsonData(Response::HTTP_OK);
 
