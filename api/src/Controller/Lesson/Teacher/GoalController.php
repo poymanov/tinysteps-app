@@ -180,10 +180,7 @@ class GoalController extends BaseController
      *     @OA\Response(
      *         response="200",
      *         description="Успешный ответ",
-     *         @OA\JsonContent(
-     *              @OA\Property(property="id", type="string", example="00000000-0000-0000-0000-000000000001"),
-     *              @OA\Property(property="name", type="string", example="Для переезда"),
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/GoalShowResponse")
      *     ),
      * )
      *

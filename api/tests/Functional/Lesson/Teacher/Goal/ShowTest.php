@@ -57,8 +57,12 @@ class ShowTest extends DbWebTestCase
 
         self::assertEquals([
             [
-                'id'   => GoalFixture::GOAL_2_ID,
-                'name' => 'Для учебы',
+                'id'         => GoalFixture::GOAL_2_ID,
+                'alias'      => 'dla-uceby',
+                'name'       => 'Для учебы',
+                'status'     => 'active',
+                'sort'       => 2,
+                'created_at' => '2020-01-02 10:00:00',
             ],
         ], $data);
     }

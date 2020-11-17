@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Functional\Lesson\Teacher\Show;
+namespace App\Tests\Functional\Lesson\Teacher\Show\One;
 
 use App\Tests\Fixtures\TeacherFixture;
 use App\Tests\Fixtures\UserFixture;
@@ -10,9 +10,9 @@ use App\Tests\Functional\DbWebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class OneTest extends DbWebTestCase
+class IdTest extends DbWebTestCase
 {
-    private const BASE_URL = '/teachers/show/one/';
+    private const BASE_URL = '/teachers/show/one/id/';
 
     private const BASE_URL_TEACHER_1 = self::BASE_URL . TeacherFixture::TEACHER_1_ID;
 

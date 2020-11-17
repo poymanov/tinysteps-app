@@ -42,7 +42,11 @@ class TeacherGoalFetcher
         $query = $this->connection->createQueryBuilder()
             ->select(
                 'lg.id',
-                'lg.name'
+                'lg.alias',
+                'lg.name',
+                'lg.status',
+                'lg.sort',
+                'lg.created_at'
             )
             ->from('lesson_teachers_goals', 'ltg')
             ->innerJoin('ltg', 'lesson_goals', 'lg', 'ltg.goal_id = lg.id')

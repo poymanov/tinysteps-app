@@ -1,9 +1,10 @@
 import {ActionType} from "../../action";
-import {buildTeachers} from "../../../services/teachers";
+import {buildTeacher, buildTeachers} from "../../../services/teachers";
 
 const initialState = {
     teachers: [],
-    teachersByGoal: []
+    teachersByGoal: [],
+    currentTeacher: null
 };
 
 const teachers = (state = initialState, action) => {
@@ -14,6 +15,10 @@ const teachers = (state = initialState, action) => {
             return {...state, ...{teachersByGoal: buildTeachers(action.payload)}};
         case ActionType.FLUSH_TEACHERS_BY_GOAL:
             return {...state, ...{teachersByGoal: []}};
+        case ActionType.LOAD_TEACHER:
+            return {...state, ...{currentTeacher: buildTeacher(action.payload)}};
+        case ActionType.FLUSH_TEACHER:
+            return {...state, ...{currentTeacher: null}};
         default:
             return state;
     }

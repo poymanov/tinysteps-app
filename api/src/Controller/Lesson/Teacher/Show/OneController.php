@@ -29,7 +29,7 @@ class OneController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/teachers/show/one/{id}",
+     *     path="/teachers/show/one/id/{id}",
      *     tags={"teachers"},
      *     description="Получение преподавателя",
      *     @OA\Parameter(name="id", in="path", required=true, description="Идентификатор преподавателя", @OA\Schema(type="string")),
@@ -56,14 +56,44 @@ class OneController extends BaseController
      *     )
      * )
      *
-     * @Route("/teachers/show/one/{id}", name="teachers.show.one", methods={"GET"})
+     * @Route("/teachers/show/one/id/{id}", name="teachers.show.one.id", methods={"GET"})
      *
      * @param Teacher $teacher
      *
      * @return Response
      * @throws Exception
      */
-    public function one(Teacher $teacher): Response
+    public function id(Teacher $teacher): Response
+    {
+        return $this->json($this->teachers->getOne($teacher->getId()->getValue()));
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/teachers/show/one/alias/{alias}",
+     *     tags={"teachers"},
+     *     description="Получение преподавателя",
+     *     @OA\Parameter(name="alias", in="path", required=true, description="Alias преподавателя", @OA\Schema(type="string")),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Успешный ответ",
+     *         @OA\JsonContent(ref="#/components/schemas/TeacherShowResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="По указанному alias преподаватель не найден",
+     *         @OA\JsonContent(ref="#/components/schemas/TeacherShowResponse")
+     *     ),
+     * )
+     *
+     * @Route("/teachers/show/one/alias/{alias}", name="teachers.show.one.alias", methods={"GET"})
+     *
+     * @param Teacher $teacher
+     *
+     * @return Response
+     * @throws Exception
+     */
+    public function alias(Teacher $teacher): Response
     {
         return $this->json($this->teachers->getOne($teacher->getId()->getValue()));
     }

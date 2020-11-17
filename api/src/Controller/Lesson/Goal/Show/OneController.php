@@ -87,6 +87,11 @@ class OneController extends BaseController
      *         description="Успешный ответ",
      *         @OA\JsonContent(ref="#/components/schemas/GoalShowResponse")
      *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="По указанному alias цель обучения не найдена",
+     *         @OA\JsonContent(ref="#/components/schemas/GoalShowResponse")
+     *     ),
      * )
      *
      * @Route("/goals/show/one/alias/{alias}", name="goals.show.one.alias", methods={"GET"})

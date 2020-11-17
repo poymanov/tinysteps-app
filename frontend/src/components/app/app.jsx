@@ -15,7 +15,7 @@ function App() {
                 <Layout>
                     <Route exact path={AppRoute.ROOT}><Main/></Route>
                     <Route exact path={AppRoute.GOALS + `/:alias`} render={({match}) => <Goal alias={match.params.alias}/>} />
-                    <Route exact path={AppRoute.TEACHERS + `/:alias`}><Teacher/></Route>
+                    <Route exact path={AppRoute.TEACHERS + `/:alias`} render={({match}) => <Teacher alias={match.params.alias}/>} />
                     <Route exact path={AppRoute.REQUEST}><TeacherRequest/></Route>
                 </Layout>
             </Switch>
