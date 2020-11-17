@@ -6,7 +6,7 @@ function GoalItem(props) {
     const {goal} = props;
 
     return (
-        <Link to={`/goals/${goal.alias}`} className="btn btn-outline-secondary">{goal.name}</Link>
+        <Link to={`/goals/${goal.alias}`} className="btn btn-outline-secondary">{goal.icon} {goal.name}</Link>
     );
 }
 

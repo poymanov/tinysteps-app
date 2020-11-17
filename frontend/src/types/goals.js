@@ -6,6 +6,7 @@ const goal = PropTypes.shape({
     alias: PropTypes.string.isRequired,
     sort: PropTypes.number.isRequired,
     status: PropTypes.number.isRequired,
+    icon: PropTypes.string,
     createdAt: PropTypes.string.isRequired,
 });
 

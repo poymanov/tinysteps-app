@@ -49,6 +49,12 @@ class Goal
     private int $sort;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private string $icon;
+
+    /**
      * @var DateTimeImmutable
      * @ORM\Column(type="datetime_immutable")
      */
@@ -112,6 +118,14 @@ class Goal
     }
 
     /**
+     * @return string
+     */
+    public function getIcon(): string
+    {
+        return $this->icon;
+    }
+
+    /**
      * @return DateTimeImmutable
      */
     public function getCreatedAt(): DateTimeImmutable
@@ -161,5 +175,15 @@ class Goal
         }
 
         $this->sort = $sort;
+    }
+
+    /**
+     * Изменение иконки
+     *
+     * @param string $icon
+     */
+    public function changeIcon(string $icon): void
+    {
+        $this->icon = $icon;
     }
 }

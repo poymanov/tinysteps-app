@@ -5,6 +5,7 @@ export const buildGoal = (goalData) => {
         alias: goalData.alias,
         sort: goalData.sort,
         status: goalData.sort,
+        icon: goalData.icon,
         createdAt: goalData.created_at,
     };
 };

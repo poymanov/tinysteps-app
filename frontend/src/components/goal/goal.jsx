@@ -33,7 +33,7 @@ class Goal extends PureComponent {
 
         if (goal) {
             goalTitle = <h1 className="h1 text-center w-50 mx-auto mt-1 py-5 mb-4">
-                <strong><br/>Преподаватели<br/>{goal.name.toLowerCase()}</strong>
+                <strong>{goal.icon}<br/>Преподаватели<br/>{goal.name.toLowerCase()}</strong>
             </h1>;
         }
 

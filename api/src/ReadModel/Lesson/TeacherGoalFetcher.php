@@ -46,6 +46,7 @@ class TeacherGoalFetcher
                 'lg.name',
                 'lg.status',
                 'lg.sort',
+                'lg.icon',
                 'lg.created_at'
             )
             ->from('lesson_teachers_goals', 'ltg')

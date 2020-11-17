@@ -62,6 +62,7 @@ class ShowTest extends DbWebTestCase
                 'name'       => 'Для учебы',
                 'status'     => 'active',
                 'sort'       => 2,
+                'icon'       => '🏫',
                 'created_at' => '2020-01-02 10:00:00',
             ],
         ], $data);

@@ -99,7 +99,7 @@ class GoalFetcher
     private function getBaseListQuery(): QueryBuilder
     {
         return $this->connection->createQueryBuilder()
-            ->select('id', 'alias', 'name', 'status', 'sort', 'created_at')
+            ->select('id', 'alias', 'name', 'status', 'sort', 'icon' ,'created_at')
             ->from('lesson_goals')
             ->orderBy('sort', 'ASC');
     }

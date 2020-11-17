@@ -31,6 +31,7 @@ class ListTest extends DbWebTestCase
                 'name'       => 'Для переезда',
                 'status'     => 'active',
                 'sort'       => 1,
+                'icon'       => '🚜',
                 'created_at' => '2020-01-01 10:00:00',
             ],
             [
@@ -39,6 +40,7 @@ class ListTest extends DbWebTestCase
                 'name'       => 'Для учебы',
                 'status'     => 'active',
                 'sort'       => 2,
+                'icon'       => '🏫',
                 'created_at' => '2020-01-02 10:00:00',
             ],
             [
@@ -47,6 +49,7 @@ class ListTest extends DbWebTestCase
                 'name'       => 'Для путешествий',
                 'status'     => 'active',
                 'sort'       => 3,
+                'icon'       => '⛱',
                 'created_at' => '2020-01-03 10:00:00',
             ],
             [
@@ -55,6 +58,7 @@ class ListTest extends DbWebTestCase
                 'name'       => 'Для работы',
                 'status'     => 'active',
                 'sort'       => 4,
+                'icon'       => '🏢',
                 'created_at' => '2020-01-04 10:00:00',
             ],
             [
@@ -63,6 +67,7 @@ class ListTest extends DbWebTestCase
                 'name'       => 'Прочее',
                 'status'     => 'archived',
                 'sort'       => 5,
+                'icon'       => null,
                 'created_at' => '2020-01-05 10:00:00',
             ],
         ], $data);
@@ -84,6 +89,7 @@ class ListTest extends DbWebTestCase
                 'name'       => 'Для переезда',
                 'status'     => 'active',
                 'sort'       => 1,
+                'icon'       => '🚜',
                 'created_at' => '2020-01-01 10:00:00',
             ],
             [
@@ -92,6 +98,7 @@ class ListTest extends DbWebTestCase
                 'name'       => 'Для учебы',
                 'status'     => 'active',
                 'sort'       => 2,
+                'icon'       => '🏫',
                 'created_at' => '2020-01-02 10:00:00',
             ],
             [
@@ -100,6 +107,7 @@ class ListTest extends DbWebTestCase
                 'name'       => 'Для путешествий',
                 'status'     => 'active',
                 'sort'       => 3,
+                'icon'       => '⛱',
                 'created_at' => '2020-01-03 10:00:00',
             ],
             [
@@ -108,6 +116,7 @@ class ListTest extends DbWebTestCase
                 'name'       => 'Для работы',
                 'status'     => 'active',
                 'sort'       => 4,
+                'icon'       => '🏢',
                 'created_at' => '2020-01-04 10:00:00',
             ],
         ], $data);
@@ -129,6 +138,7 @@ class ListTest extends DbWebTestCase
                 'name'       => 'Прочее',
                 'status'     => 'archived',
                 'sort'       => 5,
+                'icon'       => null,
                 'created_at' => '2020-01-05 10:00:00',
             ],
         ], $data);

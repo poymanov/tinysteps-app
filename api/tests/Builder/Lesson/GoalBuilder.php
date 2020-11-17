@@ -39,6 +39,11 @@ class GoalBuilder
     private int $sort;
 
     /**
+     * @var string|null
+     */
+    private ?string $icon = null;
+
+    /**
      * @var DateTimeImmutable
      */
     private $createdAt;
@@ -123,6 +128,19 @@ class GoalBuilder
     }
 
     /**
+     * @param string|null $icon
+     *
+     * @return $this
+     */
+    public function withIcon(?string $icon): self
+    {
+        $clone       = clone $this;
+        $clone->icon = $icon;
+
+        return $clone;
+    }
+
+    /**
      * @param DateTimeImmutable $date
      *
      * @return $this
@@ -147,7 +165,10 @@ class GoalBuilder
             $goal->changeStatus($this->status);
         }
 
+        if ($this->icon) {
+            $goal->changeIcon($this->icon);
+        }
+
         return $goal;
     }
-
 }

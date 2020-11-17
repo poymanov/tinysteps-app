@@ -44,23 +44,28 @@ class GoalFixture extends Fixture
             self::GOAL_1_ID => [
                 'name'      => 'Для переезда',
                 'createdAt' => '2020-01-01 10:00:00',
+                'icon'      => '🚜',
             ],
             self::GOAL_2_ID => [
                 'name'      => 'Для учебы',
                 'createdAt' => '2020-01-02 10:00:00',
+                'icon'      => '🏫',
             ],
             self::GOAL_3_ID => [
                 'name'      => 'Для путешествий',
                 'createdAt' => '2020-01-03 10:00:00',
+                'icon'      => '⛱',
             ],
             self::GOAL_4_ID => [
                 'name'      => 'Для работы',
                 'createdAt' => '2020-01-04 10:00:00',
+                'icon'      => '🏢',
             ],
             self::GOAL_5_ID => [
                 'name'      => 'Прочее',
                 'createdAt' => '2020-01-05 10:00:00',
                 'status'    => 'archived',
+                'icon'      => null,
             ],
         ];
 
@@ -69,6 +74,7 @@ class GoalFixture extends Fixture
         foreach ($goals as $uuid => $properties) {
             $name  = $properties['name'];
             $alias = $this->slugGenerator->generate($name);
+            $icon  = $properties['icon'];
             $sort++;
 
             $builder = (new GoalBuilder())
@@ -76,6 +82,7 @@ class GoalFixture extends Fixture
                 ->withAlias(new Alias($alias))
                 ->withName($name)
                 ->withSort($sort)
+                ->withIcon($icon)
                 ->withCreatedAt(new DateTimeImmutable($properties['createdAt']));
 
             if (isset($properties['status'])) {

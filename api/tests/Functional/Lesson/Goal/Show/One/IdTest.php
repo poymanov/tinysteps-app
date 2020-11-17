@@ -66,6 +66,7 @@ class IdTest extends DbWebTestCase
             'name'       => 'Для переезда',
             'status'     => 'active',
             'sort'       => 1,
+            'icon'       => '🚜',
             'created_at' => '2020-01-01 10:00:00',
         ], $data);
     }
