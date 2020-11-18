@@ -10,10 +10,11 @@ use App\Model\Lesson\Entity\Teacher\Status;
 use App\Tests\Builder\Lesson\TeacherBuilder;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
 
-class TeacherFixture extends Fixture
+class TeacherFixture extends Fixture implements FixtureGroupInterface
 {
     public const TEACHER_1_ID = '00000000-0000-0000-0000-000000000001';
 
@@ -65,5 +66,13 @@ class TeacherFixture extends Fixture
         $manager->persist($teacher);
 
         $manager->flush();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getGroups(): array
+    {
+        return ['test'];
     }
 }

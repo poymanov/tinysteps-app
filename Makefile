@@ -53,10 +53,13 @@ api-generate-documentation:
 	docker-compose run --rm api-php-cli php bin/console api:generate-docs
 
 api-fixtures:
-	docker-compose run --rm api-php-cli php bin/console doctrine:fixtures:load --no-interaction
+	docker-compose run --rm api-php-cli php bin/console doctrine:fixtures:load --group=common --no-interaction
+
+api-fixtures-demo:
+	docker-compose run --rm api-php-cli php bin/console doctrine:fixtures:load --group=common --group=demo --no-interaction
 
 api-fixtures-test:
-	docker-compose run --rm api-php-cli php bin/console doctrine:fixtures:load --no-interaction --env=test
+	docker-compose run --rm api-php-cli php bin/console doctrine:fixtures:load --group=common --group=test --no-interaction --env=test
 
 frontend-clear:
 	docker run --rm -v ${PWD}/frontend:/app -w /app alpine sh -c 'rm -rf .ready build'

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Lesson\Goal\Update\Sort;
 
-use App\Tests\Fixtures\GoalFixture;
+use App\DataFixtures\GoalFixture;
 use App\Tests\Functional\DbWebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -43,7 +43,7 @@ class Teacher extends PureComponent {
                 <div className="card-body m-2 m-md-4">
                     <div className="row">
                         <div className="col-5">
-                            <img src="https://via.placeholder.com/300.png" className="img-fluid" alt={teacher.name.full} />
+                            <img src={teacher.photo} className="img-fluid" alt={teacher.name.full} />
                         </div>
                         <div className="col-7">
                             <h1 className="h2">{teacher.name.full}</h1>

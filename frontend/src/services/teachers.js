@@ -7,7 +7,7 @@ export const buildTeacher = (teacherData) => {
             last: teacherData.name.last,
             full: teacherData.name.first + ` ` + teacherData.name.last
         },
-        photo: `https://via.placeholder.com/300`,
+        photo: `https://i.pravatar.cc/300?u=${teacherData.id}`,
         description: teacherData.description,
         price: teacherData.price,
         rating: teacherData.rating,

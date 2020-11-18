@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Lesson\Teacher\Show\All;
 
-use App\Tests\Fixtures\GoalFixture;
+use App\DataFixtures\GoalFixture;
 use App\Tests\Fixtures\TeacherFixture;
 use App\Tests\Fixtures\UserFixture;
 use App\Tests\Functional\DbWebTestCase;

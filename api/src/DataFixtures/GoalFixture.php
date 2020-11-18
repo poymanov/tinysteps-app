@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Fixtures;
+namespace App\DataFixtures;
 
 use App\Model\Lesson\Entity\Goal\Alias;
 use App\Model\Lesson\Entity\Goal\Id;
@@ -11,9 +11,10 @@ use App\Tests\Builder\Lesson\GoalBuilder;
 use Ausi\SlugGenerator\SlugGenerator;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class GoalFixture extends Fixture
+class GoalFixture extends Fixture implements FixtureGroupInterface
 {
     public const GOAL_1_ID = '00000000-0000-0000-0000-000000000001';
 
@@ -95,5 +96,10 @@ class GoalFixture extends Fixture
         }
 
         $manager->flush();
+    }
+
+    public static function getGroups(): array
+    {
+        return ['common'];
     }
 }

@@ -9,10 +9,11 @@ use App\Model\Lesson\Entity\Schedule\Schedule;
 use App\Model\Lesson\Entity\Teacher\Teacher;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class ScheduleFixture extends Fixture implements DependentFixtureInterface
+class ScheduleFixture extends Fixture implements DependentFixtureInterface, FixtureGroupInterface
 {
     public const ID_1 = '00000000-0000-0000-0000-000000000001';
 
@@ -70,5 +71,13 @@ class ScheduleFixture extends Fixture implements DependentFixtureInterface
         return [
             TeacherFixture::class,
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getGroups(): array
+    {
+        return ['test'];
     }
 }

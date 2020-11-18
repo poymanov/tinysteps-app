@@ -14,9 +14,10 @@ use App\Tests\Builder\User\UserBuilder;
 use DateInterval;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class UserFixture extends Fixture
+class UserFixture extends Fixture implements FixtureGroupInterface
 {
     public const NOT_CONFIRMED_UUID = '00000000-0000-0000-0000-000000000100';
 
@@ -94,5 +95,13 @@ class UserFixture extends Fixture
     private function getConfirmedUser(): UserBuilder
     {
         return (new UserBuilder())->confirmed();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getGroups(): array
+    {
+        return ['test'];
     }
 }

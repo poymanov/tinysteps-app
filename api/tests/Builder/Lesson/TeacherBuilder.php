@@ -8,6 +8,7 @@ use App\Model\Lesson\Entity\Teacher\Alias;
 use App\Model\Lesson\Entity\Teacher\Description;
 use App\Model\Lesson\Entity\Teacher\Id;
 use App\Model\Lesson\Entity\Teacher\Price;
+use App\Model\Lesson\Entity\Teacher\Rating;
 use App\Model\Lesson\Entity\Teacher\Status;
 use App\Model\Lesson\Entity\Teacher\Teacher;
 use DateTimeImmutable;
@@ -39,6 +40,11 @@ class TeacherBuilder
      * @var Price
      */
     private Price $price;
+
+    /**
+     * @var Rating|null
+     */
+    private ?Rating $rating = null;
 
     /**
      * @var Status|null
@@ -127,6 +133,19 @@ class TeacherBuilder
     }
 
     /**
+     * @param Rating $rating
+     *
+     * @return $this
+     */
+    public function withRating(Rating $rating): self
+    {
+        $clone        = clone $this;
+        $clone->rating = $rating;
+
+        return $clone;
+    }
+
+    /**
      * @param Status $status
      *
      * @return $this
@@ -158,10 +177,14 @@ class TeacherBuilder
      */
     public function build(): Teacher
     {
-        $teacher = new Teacher($this->id, $this->userId, $this->alias, $this->description, $this->price, $this->createdAt);;
+        $teacher = new Teacher($this->id, $this->userId, $this->alias, $this->description, $this->price, $this->createdAt);
 
         if ($this->status) {
             $teacher->changeStatus($this->status);
+        }
+
+        if ($this->rating) {
+            $teacher->changeRating($this->rating);
         }
 
         return $teacher;

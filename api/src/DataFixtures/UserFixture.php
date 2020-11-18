@@ -10,9 +10,10 @@ use App\Model\User\Entity\User\Role;
 use App\Model\User\Service\PasswordHasher;
 use App\Tests\Builder\User\UserBuilder;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class UserFixture extends Fixture
+class UserFixture extends Fixture implements FixtureGroupInterface
 {
     public const USER_1_ID = '00000000-0000-0000-0000-000000000001';
 
@@ -75,5 +76,13 @@ class UserFixture extends Fixture
             'email'    => 'admin@app.test',
             'password' => '123qwe',
         ];
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getGroups(): array
+    {
+        return ['common'];
     }
 }
