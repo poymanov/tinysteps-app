@@ -69,9 +69,8 @@ class NextTest extends DbWebTestCase
         $data = $this->getJsonData(Response::HTTP_BAD_REQUEST);
 
         self::assertEquals([
-            'error' => [
-                'message' => 'Перемещение невозможно. Цель является последней.',
-            ],
+            'message' => 'Перемещение невозможно. Цель является последней.',
+            'errors' => [],
         ], $data);
     }
 

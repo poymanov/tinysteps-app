@@ -68,9 +68,8 @@ class ExceptionFormatter implements EventSubscriberInterface
     private function buildErrorResponse(string $message, int $statusCode): JsonResponse
     {
         return new JsonResponse([
-            'error' => [
-                'message' => $message,
-            ],
+            'message' => $message,
+            'errors' => new \StdClass()
         ], $statusCode);
     }
 

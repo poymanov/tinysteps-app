@@ -23,3 +23,11 @@ export const teachersByGoalSelector = (state) => {
 export const goalsByTeacherSelector = (state) => {
     return state[NameSpace.GOALS].currentTeacherGoals;
 };
+
+export const registrationValidationErrorsSelector = (state) => {
+    return state[NameSpace.REGISTRATION].validationErrors;
+};
+
+export const alertsSelector = (state) => {
+    return state[NameSpace.ALERTS].alerts;
+}

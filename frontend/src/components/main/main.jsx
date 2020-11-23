@@ -8,6 +8,7 @@ import GoalTypes from "../../types/goals";
 import {goalsSelector, teachersSelector} from "../../store/selectors";
 import {fetchGoals, fetchTeachers} from "../../store/api-actions";
 import TeacherTypes from "../../types/teachers";
+import AlertsList from "../alerts-list/alerts-list";
 
 class Main extends PureComponent {
     componentDidMount() {
@@ -31,6 +32,7 @@ class Main extends PureComponent {
 
         return (
             <Fragment>
+                <AlertsList />
                 <h1 className="h1 text-center mx-auto mt-4 py-5">
                     <strong>Найдите идеального <br/>репетитора английского, <br/>занимайтесь онлайн</strong>
                 </h1>

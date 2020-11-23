@@ -22,9 +22,8 @@ class ConfirmTest extends DbWebTestCase
         $data = $this->getJsonData(Response::HTTP_BAD_REQUEST);
 
         self::assertEquals([
-            'error' => [
-                'message' => 'Неизвестный токен.',
-            ],
+            'message' => 'Неизвестный токен.',
+            'errors' => [],
         ], $data);
     }
 

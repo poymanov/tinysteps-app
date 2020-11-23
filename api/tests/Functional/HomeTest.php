@@ -31,9 +31,8 @@ class HomeTest extends DbWebTestCase
         $data = $this->getJsonData(Response::HTTP_NOT_FOUND);
 
         self::assertEquals([
-            'error' => [
-                'message' => 'Неизвестный запрос',
-            ]
+            'message' => 'Неизвестный запрос',
+            'errors' => []
         ], $data);
     }
 
@@ -47,9 +46,8 @@ class HomeTest extends DbWebTestCase
         $data = $this->getJsonData(Response::HTTP_METHOD_NOT_ALLOWED);
 
         self::assertEquals([
-            'error' => [
-                'message' => 'Неподдерживаемый тип запроса',
-            ]
+            'message' => 'Неподдерживаемый тип запроса',
+            'errors' => []
         ], $data);
     }
 }

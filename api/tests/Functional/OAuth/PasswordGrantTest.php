@@ -30,9 +30,8 @@ class PasswordGrantTest extends DbWebTestCase
         $data = $this->getJsonData(Response::HTTP_BAD_REQUEST);
 
         self::assertEquals([
-            'error' => [
-                'message' => 'Пользователь не найден.',
-            ],
+            'message' => 'Пользователь не найден.',
+            'errors' => [],
         ], $data);
     }
 

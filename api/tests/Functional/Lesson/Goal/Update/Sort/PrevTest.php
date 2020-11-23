@@ -69,9 +69,8 @@ class PrevTest extends DbWebTestCase
         $data = $this->getJsonData(Response::HTTP_BAD_REQUEST);
 
         self::assertEquals([
-            'error' => [
-                'message' => 'Перемещение невозможно. Цель является первой.',
-            ],
+            'message' => 'Перемещение невозможно. Цель является первой.',
+            'errors' => [],
         ], $data);
     }
 

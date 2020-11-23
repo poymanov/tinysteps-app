@@ -1,5 +1,5 @@
-import {loadGoal, loadGoals, loadGoalsByTeacher, loadTeacher, loadTeachers, loadTeachersByGoal} from "./action";
-import {APIRoute} from "../constants/const";
+import {loadAlert, loadGoal, loadGoals, loadGoalsByTeacher, loadRegistrationErrors, loadTeacher, loadTeachers, loadTeachersByGoal, redirectToRoute} from "./action";
+import {ALERTS, APIRoute, AppRoute, HttpCode} from "../constants/const";
 
 export const fetchGoals = () => (dispatch, _getState, api) => (
     api.get(APIRoute.GOALS_ACTIVE)
@@ -29,4 +29,15 @@ export const fetchTeacher = (alias) => (dispatch, _getState, api) => (
 export const fetchTeachersByGoal = (goalId) => (dispatch, _getState, api) => (
     api.get(APIRoute.TEACHERS_ACTIVE_BY_GOAL + `/${goalId}`)
         .then(({data}) => dispatch(loadTeachersByGoal(data)))
+);
+
+export const registration = (fields) => (dispatch, _getState, api) => (
+    api.post(APIRoute.REGISTRATION, fields)
+        .then((response) => {
+            if (response.status === HttpCode.CREATED) {
+                dispatch(loadAlert(ALERTS.SUCCESS_REGISTRATION));
+                dispatch(redirectToRoute(AppRoute.ROOT));
+            }
+        })
+        .catch((e) => {dispatch(loadRegistrationErrors(e.response.data))})
 );

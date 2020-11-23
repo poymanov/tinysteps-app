@@ -95,9 +95,8 @@ class RequestTest extends DbWebTestCase
         $data = $this->getJsonData(Response::HTTP_BAD_REQUEST);
 
         self::assertEquals([
-            'error' => [
-                'message' => 'Пользователь уже существует.',
-            ],
+            'message' => 'Пользователь уже существует.',
+            'errors' => [],
         ], $data);
     }
 

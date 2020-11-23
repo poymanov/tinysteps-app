@@ -19,7 +19,9 @@ function Header() {
                         </li>
                     </ul>
                 </div>
-                <span className="navbar-text d-sm-none d-lg-block">☺️</span>
+                <span className="navbar-text d-sm-none d-lg-block">
+                    <Link to="/registration" className="nav-link">Регистрация</Link>
+                </span>
             </nav>
         </header>
     );

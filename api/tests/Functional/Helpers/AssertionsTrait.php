@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Helpers;
 
 use App\Tests\Functional\DbWebTestCase;
-use DomainException;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 trait AssertionsTrait
@@ -60,9 +58,8 @@ trait AssertionsTrait
         $data = $testCase->getJsonData(Response::HTTP_FORBIDDEN);
 
         self::assertEquals([
-            'error' => [
-                'message' => 'Вам запрещено выполнять данное действие',
-            ],
+            'message' => 'Вам запрещено выполнять данное действие',
+            'errors' => [],
         ], $data);
     }
 
@@ -82,9 +79,8 @@ trait AssertionsTrait
         $data = $testCase->getJsonData(Response::HTTP_INTERNAL_SERVER_ERROR);
 
         self::assertEquals([
-            'error' => [
-                'message' => 'Ошибка запроса к базе данных',
-            ],
+            'message' => 'Ошибка запроса к базе данных',
+            'errors' => [],
         ], $data);
     }
 
@@ -149,9 +145,8 @@ trait AssertionsTrait
         $data = $testCase->getJsonData(Response::HTTP_BAD_REQUEST);
 
         self::assertEquals([
-            'error' => [
-                'message' => $message,
-            ],
+            'message' => $message,
+            'errors' => [],
         ], $data);
     }
 }

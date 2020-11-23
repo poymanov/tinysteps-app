@@ -74,9 +74,8 @@ class AddTest extends DbWebTestCase
         $data = $this->getJsonData(Response::HTTP_BAD_REQUEST);
 
         self::assertEquals([
-            'error' => [
-                'message' => 'Пользователь не активен.',
-            ],
+            'message' => 'Пользователь не активен.',
+            'errors' => [],
         ], $data);
     }
 
