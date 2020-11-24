@@ -42,3 +42,6 @@ services:
     App\Event\Listener\SetFromListener:
         $fromEmail: '%env(MAILER_FROM_EMAIL)%'
         $fromName: '%env(MAILER_FROM_NAME)%'
+
+    App\Services\FrontendUrlGenerator:
+        $baseUrl: '%env(FRONTEND_URL)%'

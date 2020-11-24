@@ -3,6 +3,6 @@
 {% block body %}
 <p>Подтверждение регистрации:</p>
 
-{% set url = url('auth.signup.confirm', {'token': token}) %}
+{% set url = frontend_url('profile/confirm', {'token': token} ) %}
 <p><a href="{{ url }}">{{ url }}</a></p>
 {% endblock %}

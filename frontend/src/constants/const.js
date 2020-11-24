@@ -3,7 +3,8 @@ export const AppRoute = {
     GOALS: `/goals`,
     TEACHERS: `/teachers`,
     REQUEST: `/request`,
-    REGISTRATION: `/registration`
+    REGISTRATION: `/registration`,
+    CONFIRM_PROFILE: `/profile/confirm`
 };
 
 export const APIRoute = {
@@ -17,6 +18,7 @@ export const APIRoute = {
 };
 
 export const HttpCode = {
+    SUCCESS: 200,
     CREATED: 201
 };
 
@@ -24,5 +26,9 @@ export const ALERTS = {
     SUCCESS_REGISTRATION: {
         type: `success`,
         message: `Регистрация успешно завершена. На ваш адрес отправлено письмо для подтверждения профиля.`
+    },
+    SUCCESS_CONFIRM_PROFILE: {
+        type: `success`,
+        message: `Ваш профиль успешно подтвержден.`
     }
 };

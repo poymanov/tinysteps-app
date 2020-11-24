@@ -41,3 +41,17 @@ export const registration = (fields) => (dispatch, _getState, api) => (
         })
         .catch((e) => {dispatch(loadRegistrationErrors(e.response.data))})
 );
+
+export const confirmProfile = (token) => (dispatch, _getState, api) => (
+    api.get(APIRoute.REGISTRATION + `/${token}`)
+        .then((response) => {
+            if (response.status === HttpCode.SUCCESS) {
+                dispatch(loadAlert(ALERTS.SUCCESS_CONFIRM_PROFILE));
+                dispatch(redirectToRoute(AppRoute.ROOT));
+            }
+        })
+        .catch((e) => {
+            dispatch(loadAlert({type: `danger`, message: e.response.data.message}));
+            dispatch(redirectToRoute(AppRoute.ROOT));
+        })
+);
