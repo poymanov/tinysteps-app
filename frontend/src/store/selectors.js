@@ -28,6 +28,18 @@ export const registrationValidationErrorsSelector = (state) => {
     return state[NameSpace.REGISTRATION].validationErrors;
 };
 
+export const loginValidationErrorsSelector = (state) => {
+    return state[NameSpace.LOGIN].validationErrors;
+};
+
 export const alertsSelector = (state) => {
     return state[NameSpace.ALERTS].alerts;
+}
+
+export const isAuthSelector = (state) => {
+    return state[NameSpace.USERS].currentUser !== null;
+};
+
+export const currentUserSelector = (state) => {
+    return state[NameSpace.USERS].currentUser;
 }

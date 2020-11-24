@@ -6,14 +6,18 @@ export const ActionType = {
     LOAD_TEACHER: `LOAD_TEACHER`,
     LOAD_GOAL: `LOAD_GOAL`,
     LOAD_REGISTRATION_ERRORS: `LOAD_REGISTRATION_ERRORS`,
+    LOAD_LOGIN_ERRORS: `LOAD_LOGIN_ERRORS`,
     LOAD_ALERT: `LOAD_ALERT`,
+    LOAD_PROFILE: `LOAD_PROFILE`,
     FLUSH_GOAL: `FLUSH_GOAL`,
     FLUSH_GOALS_BY_TEACHER: `FLUSH_GOALS_BY_TEACHER`,
     FLUSH_TEACHER: `FLUSH_TEACHER`,
     FLUSH_REGISTRATION_ERRORS: `FLUSH_REGISTRATION_ERRORS`,
+    FLUSH_LOGIN_ERRORS: `FLUSH_LOGIN_ERRORS`,
     FLUSH_ALERTS: `FLUSH_ALERTS`,
+    FLUSH_TEACHERS_BY_GOAL: `FLUSH_TEACHERS_BY_GOAL`,
+    FLUSH_CURRENT_USER: `FLUSH_CURRENT_USER`,
     REDIRECT_TO_ROUTE: `REDIRECT_TO_ROUTE`,
-    FLUSH_TEACHERS_BY_GOAL: `FLUSH_TEACHERS_BY_GOAL`
 };
 
 export const loadGoals = (goals) => ({
@@ -55,9 +59,19 @@ export const loadRegistrationErrors = (errors) => ({
     payload: errors,
 });
 
+export const loadLoginErrors = (errors) => ({
+    type: ActionType.LOAD_LOGIN_ERRORS,
+    payload: errors,
+});
+
 export const loadAlert = (alert) => ({
     type: ActionType.LOAD_ALERT,
     payload: alert
+});
+
+export const loadProfile = (profile) => ({
+    type: ActionType.LOAD_PROFILE,
+    payload: profile
 });
 
 export const flushTeachersByGoal = () => ({
@@ -76,8 +90,16 @@ export const flushRegistrationErrors = () => ({
     type: ActionType.FLUSH_REGISTRATION_ERRORS,
 });
 
+export const flushLoginErrors = () => ({
+    type: ActionType.FLUSH_LOGIN_ERRORS,
+});
+
 export const flushAlerts = () => ({
     type: ActionType.FLUSH_ALERTS,
+});
+
+export const flushCurrentUser = () => ({
+    type: ActionType.FLUSH_CURRENT_USER,
 });
 
 export const redirectToRoute = (url) => ({

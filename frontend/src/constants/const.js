@@ -4,7 +4,8 @@ export const AppRoute = {
     TEACHERS: `/teachers`,
     REQUEST: `/request`,
     REGISTRATION: `/registration`,
-    CONFIRM_PROFILE: `/profile/confirm`
+    CONFIRM_PROFILE: `/profile/confirm`,
+    LOGIN: `/login`
 };
 
 export const APIRoute = {
@@ -14,7 +15,9 @@ export const APIRoute = {
     GOAL: `/goals/show/one/alias`,
     TEACHER: `/teachers/show/one/alias`,
     GOALS_BY_TEACHER: `/teachers/goal/show/all`,
-    REGISTRATION: `/auth/signup`
+    REGISTRATION: `/auth/signup`,
+    TOKEN: `/token`,
+    PROFILE: `/profile/show`
 };
 
 export const HttpCode = {

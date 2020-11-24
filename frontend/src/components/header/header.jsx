@@ -1,7 +1,21 @@
 import React from "react";
 import {Link} from "react-router-dom";
+import {AppRoute} from "../../constants/const";
+import {connect} from "react-redux";
+import PropTypes from "prop-types";
+import {isAuthSelector} from "../../store/selectors";
+import NoAuthUser from "../no-auth-user/no-auth-user";
+import AuthUser from "../auth-user/auth-user";
 
-function Header() {
+function Header({isAuth}) {
+    let profile = null;
+
+    if (isAuth) {
+        profile = <AuthUser />
+    } else {
+        profile = <NoAuthUser />
+    }
+
     return (
         <header className="container mt-3">
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -12,19 +26,25 @@ function Header() {
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
                         <li className="nav-item active">
-                            <Link to="/" className="nav-link">Все репетиторы</Link>
+                            <Link to={AppRoute.ROOT} className="nav-link">Все репетиторы</Link>
                         </li>
                         <li className="nav-item">
-                            <Link to="/request" className="nav-link">Заявка на подбор</Link>
+                            <Link to={AppRoute.REQUEST} className="nav-link">Заявка на подбор</Link>
                         </li>
                     </ul>
                 </div>
-                <span className="navbar-text d-sm-none d-lg-block">
-                    <Link to="/registration" className="nav-link">Регистрация</Link>
-                </span>
+                {profile}
             </nav>
         </header>
     );
 }
 
-export default Header;
+Header.propTypes = {
+    isAuth: PropTypes.bool.isRequired
+};
+
+const mapStateToProps = (state) => ({
+    isAuth: isAuthSelector(state),
+});
+
+export default connect(mapStateToProps, null)(Header);
