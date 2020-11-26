@@ -5,6 +5,7 @@ import {registration} from "./registration/registration";
 import {alerts} from "./alerts/alerts";
 import {login} from "./login/login";
 import {users} from "./users/users";
+import {validationErrors} from "./validation-errors/validation-errors";
 
 export const NameSpace = {
     GOALS: `GOALS`,
@@ -12,7 +13,8 @@ export const NameSpace = {
     REGISTRATION: `REGISTRATION`,
     LOGIN: `LOGIN`,
     ALERTS: `ALERTS`,
-    USERS: `USERS`
+    USERS: `USERS`,
+    VALIDATION_ERRORS: `VALIDATION_ERRORS`
 };
 
 export default combineReducers({
@@ -21,5 +23,6 @@ export default combineReducers({
     [NameSpace.REGISTRATION]: registration,
     [NameSpace.LOGIN]: login,
     [NameSpace.ALERTS]: alerts,
-    [NameSpace.USERS]: users
+    [NameSpace.USERS]: users,
+    [NameSpace.VALIDATION_ERRORS]: validationErrors
 });

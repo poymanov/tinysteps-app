@@ -1,4 +1,4 @@
-import {flushCurrentUser, loadAlert, loadGoal, loadGoals, loadGoalsByTeacher, loadLoginErrors, loadProfile, loadRegistrationErrors, loadTeacher, loadTeachers, loadTeachersByGoal, redirectToRoute} from "./action";
+import {flushCurrentUser, loadAlert, loadChangeNameErrors, loadGoal, loadGoals, loadGoalsByTeacher, loadLoginErrors, loadProfile, loadRegistrationErrors, loadTeacher, loadTeachers, loadTeachersByGoal, redirectToRoute} from "./action";
 import {ALERTS, APIRoute, AppRoute, HttpCode} from "../constants/const";
 import {oauthPasswordGrantTypeData} from "../services/api";
 
@@ -95,4 +95,16 @@ export const fetchProfile = () => (dispatch, _getState, api) => (
             dispatch(loadProfile(response.data))
         }
     }).catch((e) => dispatch(flushCurrentUser()))
+);
+
+export const changeName = (fields) => (dispatch, _getState, api) => (
+    api.patch(APIRoute.CHANGE_NAME, fields)
+        .then((response) => {
+            if (response.status === HttpCode.SUCCESS) {
+                dispatch(fetchProfile());
+                dispatch(loadAlert(ALERTS.SUCCESS_CHANGE_NAME));
+                dispatch(redirectToRoute(AppRoute.PROFILE_COMMON));
+            }
+        })
+        .catch((e) => {dispatch(loadChangeNameErrors(e.response.data))})
 );

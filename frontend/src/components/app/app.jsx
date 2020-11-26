@@ -16,6 +16,7 @@ import {fetchProfile} from "../../store/api-actions";
 import GuestRoute from "../guest-route/guest-route";
 import ProfileCommon from "../profile-common/profile-common";
 import Profile from "../profile/profile";
+import ChangeNameForm from "../change-name-form/change-name-form";
 
 class App extends PureComponent {
     componentDidMount() {
@@ -41,6 +42,9 @@ class App extends PureComponent {
                         <GuestRoute path={AppRoute.LOGIN} exact component={Login} />
                         <Route exact path={AppRoute.PROFILE_COMMON} render={() => {
                             return <Profile active="common"><ProfileCommon /></Profile>
+                        }} />
+                        <Route exact path={AppRoute.PROFILE_CHANGE_NAME} render={() => {
+                            return <Profile active="common"><ChangeNameForm /></Profile>
                         }} />
                     </Layout>
                 </Switch>

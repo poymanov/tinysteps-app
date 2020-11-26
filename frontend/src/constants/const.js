@@ -6,6 +6,7 @@ export const AppRoute = {
     REGISTRATION: `/registration`,
     CONFIRM_PROFILE: `/profile/confirm`,
     PROFILE_COMMON: `/profile/common`,
+    PROFILE_CHANGE_NAME: `/profile/name`,
     LOGIN: `/login`
 };
 
@@ -18,7 +19,8 @@ export const APIRoute = {
     GOALS_BY_TEACHER: `/teachers/goal/show/all`,
     REGISTRATION: `/auth/signup`,
     TOKEN: `/token`,
-    PROFILE: `/profile/show`
+    PROFILE: `/profile/show`,
+    CHANGE_NAME: `/profile/name`,
 };
 
 export const HttpCode = {
@@ -34,5 +36,9 @@ export const ALERTS = {
     SUCCESS_CONFIRM_PROFILE: {
         type: `success`,
         message: `Ваш профиль успешно подтвержден.`
+    },
+    SUCCESS_CHANGE_NAME: {
+        type: `success`,
+        message: `Имя успешно изменено.`
     }
 };

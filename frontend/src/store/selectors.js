@@ -43,3 +43,7 @@ export const isAuthSelector = (state) => {
 export const currentUserSelector = (state) => {
     return state[NameSpace.USERS].currentUser;
 }
+
+export const changeNameValidationErrorsSelector = (state) => {
+    return state[NameSpace.VALIDATION_ERRORS].changeName;
+};

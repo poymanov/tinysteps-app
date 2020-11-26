@@ -7,6 +7,7 @@ export const ActionType = {
     LOAD_GOAL: `LOAD_GOAL`,
     LOAD_REGISTRATION_ERRORS: `LOAD_REGISTRATION_ERRORS`,
     LOAD_LOGIN_ERRORS: `LOAD_LOGIN_ERRORS`,
+    LOAD_CHANGE_NAME_ERRORS: `LOAD_CHANGE_NAME_ERRORS`,
     LOAD_ALERT: `LOAD_ALERT`,
     LOAD_PROFILE: `LOAD_PROFILE`,
     FLUSH_GOAL: `FLUSH_GOAL`,
@@ -14,6 +15,7 @@ export const ActionType = {
     FLUSH_TEACHER: `FLUSH_TEACHER`,
     FLUSH_REGISTRATION_ERRORS: `FLUSH_REGISTRATION_ERRORS`,
     FLUSH_LOGIN_ERRORS: `FLUSH_LOGIN_ERRORS`,
+    FLUSH_CHANGE_NAME_ERRORS: `FLUSH_CHANGE_NAME_ERRORS`,
     FLUSH_ALERTS: `FLUSH_ALERTS`,
     FLUSH_TEACHERS_BY_GOAL: `FLUSH_TEACHERS_BY_GOAL`,
     FLUSH_CURRENT_USER: `FLUSH_CURRENT_USER`,
@@ -64,6 +66,11 @@ export const loadLoginErrors = (errors) => ({
     payload: errors,
 });
 
+export const loadChangeNameErrors = (errors) => ({
+    type: ActionType.LOAD_CHANGE_NAME_ERRORS,
+    payload: errors,
+});
+
 export const loadAlert = (alert) => ({
     type: ActionType.LOAD_ALERT,
     payload: alert
@@ -92,6 +99,10 @@ export const flushRegistrationErrors = () => ({
 
 export const flushLoginErrors = () => ({
     type: ActionType.FLUSH_LOGIN_ERRORS,
+});
+
+export const flushChangeNameErrors = () => ({
+    type: ActionType.FLUSH_CHANGE_NAME_ERRORS,
 });
 
 export const flushAlerts = () => ({
