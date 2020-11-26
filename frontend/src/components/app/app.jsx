@@ -13,6 +13,7 @@ import Registration from "../registration/registration";
 import ConfirmProfile from "../confirm-profile/confirm-profile";
 import Login from "../login/login";
 import {fetchProfile} from "../../store/api-actions";
+import GuestRoute from "../guest-route/guest-route";
 
 class App extends PureComponent {
     componentDidMount() {
@@ -25,17 +26,17 @@ class App extends PureComponent {
                 <Switch>
                     <Layout>
                         <Route exact path={AppRoute.ROOT}><Main/></Route>
-                        <Route exact path={AppRoute.REGISTRATION}><Registration/></Route>
+                        <GuestRoute path={AppRoute.REGISTRATION} exact component={Registration} />
                         <Route exact path={AppRoute.GOALS + `/:alias`} render={({match}) => <Goal alias={match.params.alias}/>} />
                         <Route exact path={AppRoute.TEACHERS + `/:alias`} render={({match}) => <Teacher alias={match.params.alias}/>} />
                         <Route exact path={AppRoute.REQUEST}><TeacherRequest/></Route>
-                        <Route exact path={AppRoute.CONFIRM_PROFILE} render={({location}) => {
+                        <GuestRoute exact path={AppRoute.CONFIRM_PROFILE} render={({location}) => {
                             const params = new URLSearchParams(location.search);
                             const token = params.get('token');
 
                             return <ConfirmProfile token={token} />;
                         }} />
-                        <Route exact path={AppRoute.LOGIN}><Login/></Route>
+                        <GuestRoute path={AppRoute.LOGIN} exact component={Login} />
                     </Layout>
                 </Switch>
             </BrowserRouter>
