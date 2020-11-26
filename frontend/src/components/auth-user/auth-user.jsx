@@ -5,12 +5,13 @@ import {connect} from "react-redux";
 import {flushCurrentUser} from "../../store/action";
 import PropTypes from "prop-types";
 import {Link} from "react-router-dom";
+import {AppRoute} from "../../constants/const";
 
 function AuthUser({currentUser, flushCurrentUser}) {
     return (
         <Fragment>
             <span className="navbar-text d-sm-none d-lg-block">
-                <Link to="/" className="nav-link"><b>{currentUser.name.full}</b></Link>
+                <Link to={AppRoute.PROFILE_COMMON} className="nav-link"><b>{currentUser.name.full}</b></Link>
             </span>
             <span className="navbar-text d-sm-none d-lg-block">
                 <Link to="/" className="nav-link" onClick={flushCurrentUser}>Выход</Link>

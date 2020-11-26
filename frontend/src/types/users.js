@@ -13,6 +13,7 @@ const user = PropTypes.shape({
 });
 
 const UserTypes = {
+    default: user,
     item: user.isRequired
 };
 

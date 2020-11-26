@@ -2,6 +2,7 @@ import React, {Fragment, PureComponent} from "react";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import {confirmProfile} from "../../store/api-actions";
+import Spinner from "../spinner/spinner";
 
 class ConfirmProfile extends PureComponent {
     componentDidMount() {
@@ -17,11 +18,7 @@ class ConfirmProfile extends PureComponent {
             <h1 className="h1 text-center mx-auto mt-4 py-5">
                 <strong>Подтверждение регистрации</strong>
             </h1>
-            <div className="text-center">
-                <div className="spinner-border" style={{width: `150px`, height: `150px`}} role="status">
-                    <span className="sr-only">Профиль находится в процессе подтверждения...</span>
-                </div>
-            </div>
+            <Spinner description="Профиль находится в процессе подтверждения" />
         </Fragment>;
     }
 }

@@ -5,6 +5,7 @@ export const AppRoute = {
     REQUEST: `/request`,
     REGISTRATION: `/registration`,
     CONFIRM_PROFILE: `/profile/confirm`,
+    PROFILE_COMMON: `/profile/common`,
     LOGIN: `/login`
 };
 
